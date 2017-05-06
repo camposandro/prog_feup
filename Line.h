@@ -17,10 +17,13 @@ class Line
   Line(string textLine);
   // set methods
   void setId(unsigned int id);
+  void setBusStopList(vector<string> busStopList);
+  void setTimesList(vector<int> timeList);
   // get methods
   unsigned int getId() const;
   vector<string> getBusStops() const;
   vector<int> getTimings() const;
-  // set methods
   // other methods
+  vector<string> obterParagens(vector<string> busStopList);
+  vector<int> obterTempos(vector<int> timesList);
 };

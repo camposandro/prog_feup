@@ -58,6 +58,16 @@ void Line::setId(unsigned int id)
 	this->id = id;
 }
 
+void Line::setBusStopList(vector<string> busStopList)
+{
+	this->busStopList = busStopList;
+}
+
+void Line::setTimesList(vector<int> timeList)
+{
+	this->timesList = timesList;
+}
+
 ////////////////
 // get methods
 ////////////////
@@ -74,4 +84,46 @@ vector<string> Line::getBusStops() const
 vector<int> Line::getTimings() const
 {
   return timesList;
+}
+
+// other methods
+vector<string> Line::obterParagens(vector<string> busStopList)
+{
+	int numParagem = 1;
+	string paragem;
+	cout << "(Escrever FIM para terminar)" << endl;
+
+	cout << "Paragem" << numParagem << ": ";
+	getline(cin, paragem);
+	while (paragem != "FIM")
+	{
+		busStopList.push_back(paragem);
+		numParagem++;
+		cout << "Paragem" << numParagem << ": ";
+		getline(cin, paragem);
+	}
+
+	return busStopList;
+}
+
+vector<int> Line::obterTempos(vector<int> timesList)
+{
+	if (this->getBusStops.size() > 1) // se nParagens > 1
+	{
+		int nParagem = 1;
+		int nIntervalosTempo = timesList.size() - 1;
+		string intervaloTempo;
+
+		cout << "(Escrever FIM para terminar)" << endl;
+		while (nParagem <= nIntervalosTempo)
+		{
+			cout << "Tempo de viagem paragens " << nParagem << " e "
+				<< nParagem + 1 << ": ";
+			getline(cin, intervaloTempo);
+			timesList.push_back(stoi(intervaloTempo));
+			nParagem++;
+		}
+	}
+
+	return timesList;
 }
