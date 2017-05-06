@@ -26,4 +26,5 @@ class Line
   // other methods
   vector<string> obterParagens(vector<string> busStopList);
   vector<int> obterTempos(vector<int> timesList);
+  unsigned int pesquisaParagem(string nomeParagem);
 };

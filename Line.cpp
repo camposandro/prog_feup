@@ -108,7 +108,7 @@ vector<string> Line::obterParagens(vector<string> busStopList)
 
 vector<int> Line::obterTempos(vector<int> timesList)
 {
-	if (this->getBusStops.size() > 1) // se nParagens > 1
+	if (this->getBusStops().size() > 1) // se nParagens > 1
 	{
 		int nParagem = 1;
 		int nIntervalosTempo = timesList.size() - 1;

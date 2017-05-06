@@ -24,15 +24,19 @@ int main()
 	openFiles();
 	// definir horario de funcionamento
 	definirHorario();
-
+	
 	menu();
 
 	// testes
 	Company abc("abc", "condutores", "linhas");
-	abc.createDriver();
-	abc.createLine();
+	abc.addDriver();
+	abc.addLine();
+	abc.visualizaCondutores();
+	abc.visualizaLinhas();
 	abc.removeDriver();
 	abc.removeLine();
+	abc.visualizaCondutores();
+	abc.visualizaLinhas();
 
 	return 0;
 }
