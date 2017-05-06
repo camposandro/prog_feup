@@ -8,7 +8,8 @@
 
 using namespace std;
 
-class Bus{
+class Bus
+{
  private:
   unsigned int orderInLine;
   unsigned int driverId;
@@ -25,5 +26,4 @@ class Bus{
     unsigned int setDriverId() const;
     unsigned int setLineId() const;
   // other methods
-
 };

@@ -6,9 +6,10 @@
 #include "Line.h"
 
 // construtor da classe
-Line::Line(unsigned int id, vector<string> busStopList, vector<int> timesList)
+Line::Line(unsigned int id, unsigned int freqBus, vector<string> busStopList, vector<int> timesList)
 {
 	this->id = id;
+	this->freqBus = freqBus;
 	this->busStopList = busStopList;
 	this->timesList = timesList;
 }
@@ -21,6 +22,7 @@ Line::Line(string textLine)
 
 	infoLinha >> id;
 	infoLinha.ignore(1000, ';');
+	infoLinha >> freqBus;
 	infoLinha.ignore(1000, ';');
 	infoLinha.ignore();
 	getline(infoLinha, paragens, ';');

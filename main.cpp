@@ -28,7 +28,7 @@ int main()
 	menu();
 
 	// testes
-	Company abc("abc", "condutores", "linhas");
+	Company abc ("abc", "condutores", "linhas");
 	abc.addDriver();
 	abc.addLine();
 	abc.visualizaCondutores();
@@ -37,6 +37,9 @@ int main()
 	abc.removeLine();
 	abc.visualizaCondutores();
 	abc.visualizaLinhas();
+
+	// falta alterar linhas e condutores, horarios ...
+	// falta atualizar ficheiros no final
 
 	return 0;
 }

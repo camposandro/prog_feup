@@ -10,10 +10,11 @@ class Line
 {
  private:
   unsigned int id;
+  unsigned int freqBus;
   vector<string> busStopList;
   vector<int> timesList;
  public:
-  Line(unsigned int id, vector<string> busStopList, vector<int> timesList);
+  Line(unsigned int id, unsigned int freqBus, vector<string> busStopList, vector<int> timesList);
   Line(string textLine);
   // set methods
   void setId(unsigned int id);

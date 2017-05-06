@@ -29,6 +29,12 @@ void Company::addDriver()
 	driversBubblesort();
 }
 
+// altera condutor
+void Company::changeDriver()
+{
+	
+}
+
 // remove condutor
 void Company::removeDriver()
 {
@@ -47,15 +53,21 @@ void Company::removeDriver()
 // cria linha
 void Company::addLine()
 {
-	unsigned int id;
+	unsigned int id, freqBus;
 	vector<string> busStopList;
 	vector<int> timesList;
-	obterParametrosLinha(id, busStopList, timesList);
+	obterParametrosLinha(id, freqBus, busStopList, timesList);
 
-	Line newLine(id, busStopList, timesList);
+	Line newLine(id, freqBus, busStopList, timesList);
 	vectorLines.push_back(newLine);
 
 	linesBubblesort();
+}
+
+// altera linha
+void Company::changeLine()
+{
+
 }
 
 // remove linha
@@ -261,7 +273,7 @@ void Company::obterParametrosDriver(unsigned int &id, string &name, unsigned int
 	}
 }
 
-void Company::obterParametrosLinha(unsigned int & id, vector<string>& busStopList, vector<int>& timesList)
+void Company::obterParametrosLinha(unsigned int& id, unsigned int &freqBus, vector<string>& busStopList, vector<int>& timesList)
 {
 	// atribuicao de ID e da freq dos bus
 	int posLinhaCriar;
@@ -284,6 +296,16 @@ void Company::obterParametrosLinha(unsigned int & id, vector<string>& busStopLis
 			cout << "O ID de linha introduzido ja existe!" << endl;
 
 	} while (posLinhaCriar != -1);
+
+	cout << "Frequencia dos autocarros: ";
+	cin >> freqBus;
+	while (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Frequencia dos autocarros: ";
+		cin >> freqBus;
+	}
 
 	// ignorar newline para introduzir strings
 	cin.ignore();
@@ -371,6 +393,33 @@ void Company::linesBubblesort()
 	}
 }
 
+unsigned int Company::obterPosCondutorAlterar()
+{
+	unsigned int idCondutorAlterar;
+	int posCondutorAlterar;
+	do
+	{
+		cout << "ID do condutor a alterar: ";
+		cin >> idCondutorAlterar;
+
+		while (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "ID: ";
+			cin >> idCondutorAlterar;
+		}
+
+		posCondutorAlterar = procuraIdVetorCondutores(idCondutorAlterar);
+
+		if (posCondutorAlterar == -1)
+			cout << "Introduza um ID de condutor valido!" << endl;
+
+	} while (posCondutorAlterar == -1);
+
+	return posCondutorAlterar;
+}
+
 unsigned int Company::obterPosCondutorRemover()
 {
 	unsigned int idCondutorRemover;
@@ -396,6 +445,33 @@ unsigned int Company::obterPosCondutorRemover()
 	} while (posCondutorRemover == -1);
 
 	return posCondutorRemover;
+}
+
+unsigned int Company::obterPosLinhaAlterar()
+{
+	unsigned int idLinhaAlterar;
+	int posLinhaAlterar;
+	do
+	{
+		cout << "ID da linha a remover: ";
+		cin >> idLinhaAlterar;
+
+		while (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "ID da linha a remover: ";
+			cin >> idLinhaAlterar;
+		}
+
+		posLinhaAlterar = procuraIdVetorLinhas(idLinhaAlterar);
+
+		if (posLinhaAlterar == -1)
+			cout << "Introduza um ID de linha valido!" << endl;
+
+	} while (posLinhaAlterar == -1);
+
+	return  posLinhaAlterar;
 }
 
 unsigned int Company::obterPosLinhaRemover()

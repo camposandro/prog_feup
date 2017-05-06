@@ -20,8 +20,10 @@ class Company
   Company(string name, string fileDrivers, string fileLines);
   // métodos de tratamento de linhas e condutores
   void addDriver();
+  void changeDriver();
   void removeDriver();
   void addLine();
+  void changeLine();
   void removeLine();
   void pesquisaParagem();
   // metodos get
@@ -34,8 +36,10 @@ class Company
   vector<Driver> obterCondutores(string fileDrivers);
   // funções auxiliares
   void obterParametrosDriver(unsigned int &id, string &name, unsigned int &maxHours, unsigned int &maxWeekWorkingTime, unsigned int &minRestTime, vector<Shift> &shifts);
-  void obterParametrosLinha(unsigned int &id, vector<string> &busStopList, vector<int> &timesList);
+  void obterParametrosLinha(unsigned int &id, unsigned int &freqBus, vector<string> &busStopList, vector<int> &timesList);
+  unsigned int obterPosCondutorAlterar();
   unsigned int obterPosCondutorRemover();
+  unsigned int obterPosLinhaAlterar();
   unsigned int obterPosLinhaRemover();
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);
   unsigned int procuraIdVetorLinhas(int idLinha);
