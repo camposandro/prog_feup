@@ -22,6 +22,7 @@ class Company
   void addDriver(Driver newDriver);
   void addLine(Line newLine);
   void pesquisaParagem();
+  void percursoEntreParagens();
   // metodos get
   string getName() const;
   vector<Driver> getDriversVector() const;

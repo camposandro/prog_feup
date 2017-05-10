@@ -4,6 +4,7 @@
 
 #include "Company.h"
 #include "Line.h"
+#include "Driver.h"
 
 // construtor da classe
 Line::Line(unsigned int id, unsigned int freqBus, vector<string> busStopList, vector<int> timesList)
@@ -51,6 +52,7 @@ Line::Line(string textLine)
 		infoTempos.ignore();
 	}
 }
+
 
 ////////////////
 // set methods

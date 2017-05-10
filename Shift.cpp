@@ -19,6 +19,7 @@ unsigned int Shift::getDriverId() const
 {
   return driverId;
 }
+
 unsigned int Shift::getBusOrderNumber() const
 {
   return busOrderNumber;

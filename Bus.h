@@ -5,7 +5,6 @@
 
 #include "Shift.h"
 
-
 using namespace std;
 
 class Bus

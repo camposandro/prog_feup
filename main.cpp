@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <conio.h>
 
 #include "Bus.h"
@@ -28,6 +30,9 @@ void changeDriver(unsigned int driverId, Company &semprarrolar);
 void removeDriver(int posDriver, Company &semprarrolar);
 void changeLine(unsigned int lineId, Company &semprarrolar);
 void removeLine(unsigned int posLine, Company &semprarrolar);
+void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar);
+void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company semprarrolar);
+void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -40,7 +45,8 @@ int main()
 	cout << "Nome da companhia: ";
 	getline(cin, nameCompany);
 
-	cout << endl;
+	system("cls");
+
 	cout << "--- EMPRESA DE TRANSPORTES " + nameCompany + " ---\n" << endl;
 
 	// ler os ficheiros e criar companhia
@@ -52,6 +58,10 @@ int main()
 	// chamar menu com companhia
 	opcoesPrincipal(semprarrolar);
 
+	// save changes
+	atualizaFicheiros(inCondutores, inLinhas, semprarrolar);
+	cout << endl << "Programa a encerrar ..." << endl << endl;
+
 	return 0;
 }
 
@@ -60,7 +70,7 @@ void definirHorario()
 {
 	unsigned int horaDeInicio;
 	cout << endl;
-	cout << "Horario de inicio de servico: ";
+	cout << "Hora de inicio de servico: ";
 	cin >> horaDeInicio;
 
 	while (cin.fail() || horaDeInicio > 23 || horaDeInicio < 0)
@@ -68,13 +78,13 @@ void definirHorario()
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma hora valida!\n";
-		cout << "Horario de inicio de servico: ";
+		cout << "Hora de inicio de servico: ";
 		cin >> horaDeInicio;
 	}
 	horaInicio = horaDeInicio;
 
 	unsigned int horaDeFim;
-	cout << "Horario de fim de servico: ";
+	cout << "Hora de fim de servico: ";
 	cin >> horaDeFim;
 
 	while (cin.fail() || horaDeFim > 23 || horaDeFim < 0)
@@ -82,7 +92,7 @@ void definirHorario()
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma hora valida!\n";
-		cout << "Horario de fim de servico: ";
+		cout << "Hora de fim de servico: ";
 		cin >> horaDeFim;
 	}
 	horaFim = horaDeFim;
@@ -123,9 +133,7 @@ void opcoesPrincipal(Company &semprarrolar)
 		switch (choice)
 		{
 		case 0:
-			semprarrolar.atualizaFicheiroCondutores(inCondutores);
-			semprarrolar.atualizaFicheiroLinhas(inLinhas);
-			cout << endl;
+			return;
 			break;
 		case 1:
 			opcoesGestaoLinhas(semprarrolar);
@@ -319,6 +327,8 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 			}
 			break;
 		}
+		case '#':
+			return;
 		}
 	}
 }
@@ -491,6 +501,8 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 			}
 			break;
 		}
+		case '#':
+			return;
 		}
 	}
 }
@@ -529,8 +541,34 @@ void opcoesVisualizarLinha(Company semprarrolar)
 			semprarrolar.visualizaLinhas();
 			break;
 		case 'B':
-			//semprarrolar.horarioLinha();
+		{
+			unsigned int lineId;
+			int posLine;
+			do
+			{
+				cout << endl << "ID da linha a mostrar: ";
+				cin >> lineId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID da linha a mostrar: ";
+					cin >> lineId;
+				}
+
+				posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+				if (posLine == -1)
+					cout << "O ID de linha introduzido nao existe!" << endl;
+
+			} while (posLine == -1);
+
+			horarioLinha(lineId, posLine, semprarrolar);
 			break;
+		}
+		case '#':
+			return;
 		}
 	}
 }
@@ -571,11 +609,39 @@ void opcoesPercursos(Company semprarrolar)
 			semprarrolar.pesquisaParagem();
 			break;
 		case 'B':
-			//semprarrolar.percursoEntreParagens();
+			semprarrolar.percursoEntreParagens();
 			break;
 		case 'C':
-			//semprarrolar.horarioParagem();
+		{
+			cin.ignore();
+			string nomeParagem;
+			vector<int> linhasComAParagem;
+			do
+			{
+				cout << endl << "Nome da paragem a mostrar: ";
+				getline(cin, nomeParagem);
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "Nome da paragem a mostrar: ";
+					getline(cin, nomeParagem);
+				}
+
+				// vetor que contem as posicoes das linhas que contiverem a paragem
+				linhasComAParagem = semprarrolar.procuraNomeVetorLinhas(nomeParagem);
+
+				if (linhasComAParagem.size() == 0)
+					cout << "Nao foi encontrada nenhuma paragem com o nome dado ...\n";
+
+			} while (linhasComAParagem.size() == 0);
+
+			horarioParagem(nomeParagem, linhasComAParagem, semprarrolar);
 			break;
+		}
+		case '#':
+			return;
 		}
 	}
 }
@@ -767,4 +833,269 @@ void changeLine(unsigned int lineId, Company &semprarrolar)
 void removeLine(unsigned int posLine, Company &semprarrolar)
 {
 	semprarrolar.getLinesVector().erase(semprarrolar.getLinesVector().begin() + posLine);
+}
+
+void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar)
+{
+	const int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+	Line LinhaMostrar = semprarrolar.getLinesVector().at(posLine);
+
+	cout << endl << "Linha " << lineId << endl;
+	// impressao dos nomes das paragens na primeira linha
+	for (size_t i = 0; i < LinhaMostrar.getBusStops().size(); i++)
+	{
+		// tamanho do nome da paragem
+		int tamanhoNomeParagem = LinhaMostrar.getBusStops().at(i).length();
+
+		if (i == LinhaMostrar.getBusStops().size() - 1)
+			cout << left << setw(tamanhoNomeParagem + 2) << LinhaMostrar.getBusStops().at(i) << endl;
+		else
+			cout << left << setw(tamanhoNomeParagem + 2) << LinhaMostrar.getBusStops().at(i);
+	}
+
+	// percorrem-se as linhas uma a uma para introduzir os tempos
+	int horaLin = HORA_INICIO, horaCol = HORA_INICIO, minLin = 0, minCol = 0;
+
+	// caso haja o problema de o horario ser noturno
+	int nHoras;
+	if (HORA_FIM - HORA_INICIO < 0)
+		nHoras = 24 - HORA_INICIO + HORA_FIM;
+	else nHoras = HORA_FIM - HORA_INICIO;
+
+	// numero de linhas de horario a imprimir
+	int nLinhas = (60 / LinhaMostrar.getFreqBus()) * nHoras;
+
+	for (int linhas = 0; linhas < nLinhas; linhas++)
+	{
+		for (int colunas = 0; colunas < LinhaMostrar.getBusStops().size(); colunas++)
+		{
+			int tamanhoImpressao = LinhaMostrar.getBusStops().at(colunas).length() + 2;
+
+			ostringstream streamHoras;
+			if (horaCol < 10 && minCol < 10)
+			{
+				streamHoras << setw(2) << setfill('0') << horaCol << ":" << setw(2) << setfill('0') << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else if (horaCol < 10 && minCol >= 10)
+			{
+				streamHoras << setw(2) << setfill('0') << horaCol << ":" << setw(2) << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else if (minCol < 10 && horaCol >= 10)
+			{
+				streamHoras << setw(2) << horaCol << ":" << setw(2) << setfill('0') << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else
+			{
+				streamHoras << setw(2) << horaCol << ":" << setw(2) << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+
+			if (colunas < LinhaMostrar.getBusStops().size() - 1)
+				minCol += LinhaMostrar.getTimings().at(colunas);
+
+			if (minCol / 60 == 1)
+			{
+				horaCol++;
+				minCol = minCol % 60;
+			}
+
+			if (horaCol == 24)
+				horaCol = 0;
+
+			if (colunas == LinhaMostrar.getTimings().size()) cout << endl;
+		}
+
+		minLin += LinhaMostrar.getFreqBus();
+
+		if (minLin / 60 == 1)
+		{
+			horaLin++;
+			minLin = minLin % 60;
+		}
+
+		if (horaLin == 24)
+			horaLin = 0;
+
+		horaCol = horaLin;
+		minCol = minLin;
+
+	}
+}
+
+void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company semprarrolar)
+{
+	const int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+	cout << endl;
+	for (size_t j = 0; j < linhasComAParagem.size(); j++)
+	{
+		Line LinhaMostrar = semprarrolar.getLinesVector().at(linhasComAParagem.at(j));
+		cout << "Linha " << LinhaMostrar.getId() << endl;
+
+		// retrieve the pos of the stop inside its own line
+		int posOfStop;
+		for (size_t k = 0; k < LinhaMostrar.getBusStops().size(); k++)
+		{
+			if (LinhaMostrar.getBusStops().at(k) == nomeParagem)
+				posOfStop = k;
+		}
+
+		// caso haja o problema de o horario ser noturno
+		int nHoras;
+		if (HORA_FIM - HORA_INICIO < 0)
+			nHoras = 24 - HORA_INICIO + HORA_FIM;
+		else nHoras = HORA_FIM - HORA_INICIO;
+
+		int nImpressoes = (((60 / LinhaMostrar.getFreqBus()) * nHoras + 1) / 6) + 1;
+		int hora = HORA_INICIO, min = 0;
+
+		// calculo dos minutos iniciais
+		for (size_t i = 1; i <= posOfStop; i++)
+			min += LinhaMostrar.getTimings().at(i - 1);
+
+		// calculo da hora final da paragem
+		int horaFinalParagem = HORA_INICIO;
+		int minFinalParagem = min + ((60 / LinhaMostrar.getFreqBus()) * nHoras + 1) * LinhaMostrar.getFreqBus();
+		if (minFinalParagem > 60)
+		{
+			horaFinalParagem += minFinalParagem / 60;
+			minFinalParagem = minFinalParagem % 60;
+		}
+		if (horaFinalParagem > 24) horaFinalParagem -= 24;
+
+		if (min / 60 == 1)
+		{
+			hora++;
+			min = min % 60;
+		}
+
+		for (int linhas = 0; linhas < nImpressoes; linhas++)
+		{
+			for (int colunas = 0; colunas < 6; colunas++)
+			{
+				int tamanhoImpressao = 7;
+
+				ostringstream streamHoras;
+				if (hora < 10 && min < 10)
+				{
+					streamHoras << setw(2) << setfill('0') << hora << ":" << setw(2) << setfill('0') << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else if (hora < 10 && min >= 10)
+				{
+					streamHoras << setw(2) << setfill('0') << hora << ":" << setw(2) << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else if (min < 10 && hora >= 10)
+				{
+					streamHoras << setw(2) << hora << ":" << setw(2) << setfill('0') << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else
+				{
+					streamHoras << setw(2) << hora << ":" << setw(2) << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+
+				min += LinhaMostrar.getFreqBus();
+
+				if (min / 60 == 1)
+				{
+					hora++;
+					min = min % 60;
+				}
+
+				if (hora == 24)
+					hora = 0;
+
+				if (colunas == 5 && linhas != nImpressoes - 1) cout << endl;
+
+				if (hora == horaFinalParagem && min == minFinalParagem) break;
+			}
+
+			if (hora == horaFinalParagem && min == minFinalParagem) break;
+		}
+
+		cout << endl;
+	}
+}
+
+// --- efetuar gravação das alterações nos ficheiros
+void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar)
+{
+	cout << endl;
+
+	char escolha;
+	cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
+	cin >> escolha;
+
+	while (cin.fail() || escolha != 'S' && escolha != 'N')
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma opcao valida!\n";
+		cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
+		cin >> escolha;
+	}
+
+	if (escolha == 'S')
+	{
+		// escrever no ficheiro (opcional)
+		ofstream ficheiroSaida(fileDrivers);
+		for (size_t i = 0; i < semprarrolar.getDriversVector().size(); i++)
+		{
+			ficheiroSaida << semprarrolar.getDriversVector().at(i).getId() << " ; " << 
+				semprarrolar.getDriversVector().at(i).getName() << " ; " <<
+				semprarrolar.getDriversVector().at(i).getShiftMaxDuration() << " ; " <<
+				semprarrolar.getDriversVector().at(i).getMaxWeekWorkingTime() << " ; " <<
+				semprarrolar.getDriversVector().at(i).getMinRestTime() << endl;
+		}
+	}
+
+	cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
+	cin >> escolha;
+
+	while (cin.fail() || escolha != 'S' && escolha != 'N')
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma opcao valida!\n";
+		cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
+		cin >> escolha;
+	}
+
+	if (escolha == 'S')
+	{
+		// escrever no ficheiro (opcional)
+		ofstream ficheiroSaida(fileLines);
+		for (size_t i = 0; i < semprarrolar.getLinesVector().size(); i++)
+		{
+			ficheiroSaida << semprarrolar.getLinesVector().at(i).getId() <<
+				" ; " << semprarrolar.getLinesVector().at(i).getFreqBus() << " ; ";
+			for (size_t j = 0; j < semprarrolar.getLinesVector().at(i).getBusStops().size(); j++)
+			{
+				if (j == semprarrolar.getLinesVector().at(i).getBusStops().size() - 1)
+					ficheiroSaida << semprarrolar.getLinesVector().at(i).getBusStops().at(j) << "; ";
+				else ficheiroSaida << semprarrolar.getLinesVector().at(i).getBusStops().at(j) << ", ";
+			}
+			for (size_t k = 0; k < semprarrolar.getLinesVector().at(i).getTimings().size(); k++)
+			{
+				if (k == semprarrolar.getLinesVector().at(i).getTimings().size() - 1)
+					ficheiroSaida << semprarrolar.getLinesVector().at(i).getTimings().at(k) << endl;
+				else ficheiroSaida << semprarrolar.getLinesVector().at(i).getTimings().at(k) << ", ";
+			}
+		}
+	}
 }

@@ -2,7 +2,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include <conio.h>
+
 #include "Company.h"
 
 // construtor da classe
@@ -47,6 +49,106 @@ void Company::pesquisaParagem()
 	}
 }
 
+// percurso entre paragens
+void Company::percursoEntreParagens()
+{
+	cout << endl;
+	cin.ignore(); // para limpar o buffer do char anterior
+
+	string nomeParagem1, nomeParagem2;
+	cout << "Introduza o nome da paragem de partida: ";
+	getline(cin, nomeParagem1);
+
+	cout << "Introduza o nome da paragem de destino: ";
+	getline(cin, nomeParagem2);
+
+	// verificar se pertencem a mesma linha
+
+	// vetor que contem as pos das linhas que contiverem a paragem1 e paragem2
+	vector<int> LinhasParagem1 = procuraNomeVetorLinhas(nomeParagem1);
+	vector<int> LinhasParagem2 = procuraNomeVetorLinhas(nomeParagem2);
+
+	// verificar se existem linhas em comum e caso existam, guardar num vetor LinhasComum
+	vector<int> LinhasComum;
+	for (size_t i = 0; i < LinhasParagem1.size(); i++)
+	{
+		for (size_t j = 0; j < LinhasParagem2.size(); j++)
+		{
+			if (LinhasParagem1.at(i) == LinhasParagem2.at(j))
+				LinhasComum.push_back(LinhasParagem1.at(i));
+		}
+	}
+
+	if (LinhasComum.size() == 0)
+		cout << endl << "Nao existem linhas constituidas por ambas as paragens!\n";
+	else
+	{
+		// coloca o nomeParagem1 a minuscula
+		string nomeParagem1Minuscula = nomeParagem1;
+		for (size_t k = 0; k <= nomeParagem1.length(); k++)
+			nomeParagem1Minuscula[k] = tolower(nomeParagem1[k]);
+
+		// coloca o nomeParagem2 a minuscula
+		string nomeParagem2Minuscula = nomeParagem2;
+		for (size_t k = 0; k <= nomeParagem2.length(); k++)
+			nomeParagem2Minuscula[k] = tolower(nomeParagem2[k]);
+
+
+		// percorre vetor de posicoes das linhas que contêm ambas as paragens
+		for (size_t i = 0; i < LinhasComum.size(); i++)
+		{
+			Line linhaEmComum = vectorLines.at(LinhasComum.at(i));
+
+			// encontrar posicoes respetivas na linha
+			int posParagem1, posParagem2;
+			for (size_t j = 0; j < linhaEmComum.getBusStops().size(); j++)
+			{
+				// colocar cada elemento procurado no vetor em minuscula
+				string paragemVetor = linhaEmComum.getBusStops().at(j);
+				for (int p = 0; p < paragemVetor.length(); p++)
+					paragemVetor[p] = tolower(linhaEmComum.getBusStops().at(j).at(p));
+
+				if (paragemVetor == nomeParagem1Minuscula)
+					posParagem1 = j;
+				if (paragemVetor == nomeParagem2Minuscula)
+					posParagem2 = j;
+			}
+
+			cout << endl;
+			if (posParagem1 == posParagem2)
+				cout << "Introduza diferentes paragens!\n";
+			else
+			{
+				cout << "PERCURSO " << "NA LINHA " << linhaEmComum.getId() << ":" << endl;
+				// caso se introduza no sentido original
+				if (posParagem2 < posParagem1)
+				{
+					for (size_t k = posParagem1; k > posParagem2; k--)
+					{
+						// imprime os trajetos entre as paragens entre "-->"
+						cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
+							<< right << setw(linhaEmComum.getBusStops().at(k - 1).length() + 1) << linhaEmComum.getBusStops().at(k - 1);
+						// imprime os tempos de cada trajeto 
+						cout << " " << linhaEmComum.getTimings().at(k - 1) << "min" << endl;
+					}
+				}
+				// caso se introduza no sentido inverso
+				else if (posParagem2 > posParagem1)
+				{
+					for (size_t k = posParagem1; k < posParagem2; k++)
+					{
+						// imprime os trajetos entre as paragens entre "-->"
+						cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
+							<< right << setw(linhaEmComum.getBusStops().at(k + 1).length() + 1) << linhaEmComum.getBusStops().at(k + 1);
+						// imprime os tempos de cada trajeto 
+						cout << " " << linhaEmComum.getTimings().at(k) << "min" << endl;
+					}
+				}
+			}
+		}
+	}
+}
+
 ////////////////////////////////
 // metodos get
 ///////////////////////////////
@@ -80,7 +182,6 @@ void Company::visualizaCondutores() const
 
 		if (j < vectorDrivers.size() - 1) cout << endl;
 	}
-	cout << endl;
 }
 
 void Company::visualizaLinhas() const
@@ -113,7 +214,6 @@ void Company::visualizaLinhas() const
 
 		if (i < vectorLines.size() - 1) cout << endl;
 	}
-	cout << endl;
 }
 
 //////////////////////////////
@@ -161,6 +261,7 @@ vector<Driver> Company::obterCondutores(string fileDrivers)
 ////////////////////////////
 // outros metodos
 ///////////////////////////
+/*
 void Company::atualizaFicheiroCondutores(string fileDrivers)
 {
 	char escolha;
@@ -226,6 +327,7 @@ void Company::atualizaFicheiroLinhas(string fileLines)
 		}
 	}
 }
+*/
 
 void Company::obterNomeParagem(string &nomeParagem)
 {
