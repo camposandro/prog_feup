@@ -20,7 +20,6 @@ class Driver
  public:
   Driver(unsigned int id, string name, unsigned int maxHours, unsigned int maxWeekWorkingTime, unsigned int minRestTime, vector<Shift> shifts);
   Driver(string textLine);
-  void changeDriver();
   // set methods
   void setId(unsigned int id);
   void setName(string name);

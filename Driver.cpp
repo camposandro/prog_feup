@@ -3,6 +3,7 @@
 #include <conio.h>
 
 #include "Driver.h"
+#include "Company.h"
 
 // construtores da classe
 Driver::Driver(unsigned int id, string name, unsigned int maxHours, unsigned int maxWeekWorkingTime, unsigned int minRestTime, vector<Shift> shifts)
@@ -33,6 +34,7 @@ Driver::Driver(string textLine)
 	infoCondutor >> this->minRestTime;
 }
 // ------------------------
+
 
 //////////////
 // set methods

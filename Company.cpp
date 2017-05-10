@@ -14,47 +14,10 @@ Company::Company(string name, string fileDrivers, string fileLines)
 }
 
 // cria condutor
-void Company::addDriver()
+void Company::addDriver(Driver newDriver)
 {
-	unsigned int id, maxHours, maxWeekWorkingTime, minRestTime;
-	string name;
-	vector<Shift> shifts;
-	obterParametrosDriver(id, name, maxHours, maxWeekWorkingTime, minRestTime, shifts);
-
-	Driver newDriver(id, name, maxHours, maxWeekWorkingTime, minRestTime, shifts);
 	vectorDrivers.push_back(newDriver);
-
 	driversBubblesort();
-}
-
-void Company::changeDriver()
-{
-	unsigned int posCondutorAlterar = obterPosCondutorAlterar();
-	
-	string newName;
-	unsigned int newID, newMaxHours, newMaxWeekHours, newMinRestTime;
-	obterParamAlterarDriver(newID, newName, newMaxHours, newMaxWeekHours, newMinRestTime);
-
-	vectorDrivers.at(posCondutorAlterar).setId(newID);
-	vectorDrivers.at(posCondutorAlterar).setName(newName);
-	vectorDrivers.at(posCondutorAlterar).setMaxHours(newMaxHours);
-	vectorDrivers.at(posCondutorAlterar).setMaxWeekWorkingTime(newMaxWeekHours);
-	vectorDrivers.at(posCondutorAlterar).setMinRestTime(newMinRestTime);
-}
-
-// remove condutor
-void Company::removeDriver()
-{
-	if (vectorDrivers.size() == 0)
-	{
-		cout << "Nao existem condutores a remover!\n";
-	}
-	else
-	{
-		unsigned int posCondutorRemover = obterPosCondutorRemover();
-		vectorDrivers.erase(vectorDrivers.begin() + posCondutorRemover);
-		driversBubblesort();
-	}
 }
 
 // cria linha
@@ -130,7 +93,17 @@ void Company::pesquisaParagem()
 ///////////////////////////////
 string Company::getName() const
 {
-  return name;
+	return name;
+}
+
+vector<Driver> Company::getDriversVector() const
+{
+	return vectorDrivers;
+}
+
+vector<Line> Company::getLinesVector() const
+{
+	return vectorLines;
 }
 
 void Company::visualizaCondutores() const
@@ -161,23 +134,23 @@ void Company::visualizaLinhas() const
 
 		cout << "PARAGENS: ";
 		vector<string> vetorParagens = vectorLines.at(i).getBusStops();
-			for (int j = 0; j < vetorParagens.size(); j++)
-			{
-				if (j < vetorParagens.size() - 1)
-					cout << vetorParagens.at(j) << " , ";
-				else
-					cout << vetorParagens.at(j) << endl;
-			}
+		for (int j = 0; j < vetorParagens.size(); j++)
+		{
+			if (j < vetorParagens.size() - 1)
+				cout << vetorParagens.at(j) << " , ";
+			else
+				cout << vetorParagens.at(j) << endl;
+		}
 
 		cout << "TEMPO ENTRE PARAGENS (min): ";
 		vector<int> vetorTempos = vectorLines.at(i).getTimings();
-			for (int k = 0; k < vetorTempos.size(); k++)
-			{
-				if (k < vetorParagens.size() - 2)
-					cout << vetorTempos.at(k) << " , ";
-				else
-					cout << vetorTempos.at(k) << endl;
-			}
+		for (int k = 0; k < vetorTempos.size(); k++)
+		{
+			if (k < vetorParagens.size() - 2)
+				cout << vetorTempos.at(k) << " , ";
+			else
+				cout << vetorTempos.at(k) << endl;
+		}
 
 		if (i < vectorLines.size() - 1) cout << endl;
 	}
@@ -251,7 +224,7 @@ void Company::atualizaFicheiroCondutores(string fileDrivers)
 		for (size_t i = 0; i < vectorDrivers.size(); i++)
 		{
 			ficheiroSaida << vectorDrivers.at(i).getId() << " ; " << vectorDrivers.at(i).getName() << " ; " <<
-				vectorDrivers.at(i).getShiftMaxDuration() << " ; " << vectorDrivers.at(i).getMaxWeekWorkingTime() 
+				vectorDrivers.at(i).getShiftMaxDuration() << " ; " << vectorDrivers.at(i).getMaxWeekWorkingTime()
 				<< " ; " << vectorDrivers.at(i).getMinRestTime() << endl;
 		}
 	}
@@ -292,68 +265,6 @@ void Company::atualizaFicheiroLinhas(string fileLines)
 				else ficheiroSaida << vectorLines.at(i).getTimings().at(k) << ", ";
 			}
 		}
-	}
-}
-
-void Company::obterParametrosDriver(unsigned int &id, string &name, unsigned int &maxHours, unsigned int &maxWeekWorkingTime, unsigned int &minRestTime, vector<Shift> &shifts)
-{
-	unsigned int posCondutorCriar;
-	do
-	{
-		cout << "ID: ";
-		cin >> id;
-
-		while (cin.fail())
-		{
-			cin.clear();
-			cin.ignore(1000, '\n');
-			cout << "ID: ";
-			cin >> id;
-		}
-
-		posCondutorCriar = procuraIdVetorCondutores(id);
-
-		if (posCondutorCriar != -1)
-			cout << "O ID de condutor introduzido ja existe!" << endl;
-
-	} while (posCondutorCriar != -1);
-
-	// ignorar newline para introduzir strings
-	cin.ignore();
-
-	// introducao do nome do condutor
-	cout << "Nome: ";
-	getline(cin, name);
-
-	// introducao dos tempos dos turnos
-	cout << "Numero de horas consecutivas do turno diario: ";
-	cin >> maxHours;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Numero de horas consecutivas do turno diario: ";
-		cin >> maxHours;
-	}
-
-	cout << "Numero maximo de horas por semana: ";
-	cin >> maxWeekWorkingTime;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Numero maximo de horas por semana: ";
-		cin >> maxWeekWorkingTime;
-	}
-
-	cout << "Numero minimo horas de descanso entre turnos: ";
-	cin >> minRestTime;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Numero minimo horas de descanso entre turnos: ";
-		cin >> minRestTime;
 	}
 }
 
@@ -485,7 +396,7 @@ void Company::obterParamAlterarLinha(unsigned int& newID, unsigned int &newFreqB
 			cin >> id;
 		}
 
-		 posLinhaAlterar = procuraIdVetorLinhas(id);
+		posLinhaAlterar = procuraIdVetorLinhas(id);
 
 		if (posLinhaAlterar == -1)
 			cout << "Introduza um ID de linha valido!" << endl;

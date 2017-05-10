@@ -12,13 +12,20 @@
 using namespace std;
 
 // protótipos das funções do main
-void definirHorario();
 Company createCompany();
+void definirHorario();
 unsigned int menuPrincipal();
-void menuGestaoLinhas(Company semprarrolar);
-void menuGestaoCondutores(Company semprarrolar);
-void menuOpcoesLinha(Company semprarrolar);
-void menuOpcoesPercursos(Company semprarrolar);
+void opcoesPrincipal(Company &semprarrolar);
+char menuGestaoLinhas();
+void opcoesGestaoLinhas(Company &semprarrolar);
+char menuGestaoCondutores();
+void opcoesGestaoCondutores(Company &semprarrolar);
+char menuOpcoesVisualizarLinha();
+void opcoesVisualizarLinha(Company semprarrolar);
+char menuOpcoesPercursos();
+void opcoesPercursos(Company semprarrolar);
+void changeDriver(unsigned int driverId, Company &semprarrolar);
+void removeDriver(int posDriver, Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -31,6 +38,7 @@ int main()
 	cout << "Nome da companhia: ";
 	getline(cin, nameCompany);
 
+	cout << endl;
 	cout << "--- EMPRESA DE TRANSPORTES " + nameCompany + " ---\n" << endl;
 
 	// ler os ficheiros e criar companhia
@@ -38,26 +46,9 @@ int main()
 
 	// definir horario de funcionamento
 	definirHorario();
-	
+
 	// chamar menu com companhia
-	menuPrincipal();
-
-	// testes
-	semprarrolar.addDriver();
-	semprarrolar.addLine();
-	semprarrolar.visualizaCondutores();
-	semprarrolar.visualizaLinhas();
-	semprarrolar.changeDriver();
-	semprarrolar.changeLine();
-	semprarrolar.visualizaCondutores();
-	semprarrolar.visualizaLinhas();
-	semprarrolar.removeDriver();
-	semprarrolar.removeLine();
-	semprarrolar.visualizaCondutores();
-	semprarrolar.visualizaLinhas();
-
-	// falta alterar linhas e condutores, horarios ...
-	// falta atualizar ficheiros no final
+	opcoesPrincipal(semprarrolar);
 
 	return 0;
 }
@@ -66,6 +57,7 @@ int main()
 void definirHorario()
 {
 	unsigned int horaDeInicio;
+	cout << endl;
 	cout << "Horario de inicio de servico: ";
 	cin >> horaDeInicio;
 
@@ -97,6 +89,7 @@ void definirHorario()
 // menus
 unsigned int menuPrincipal()
 {
+	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
 	cout << "1. Gestao de linhas\n"
 		<< "2. Gestao de condutores\n"
@@ -116,11 +109,11 @@ unsigned int menuPrincipal()
 		cout << "--> opcao ";
 		cin >> choice;
 	}
-	
+
 	return choice;
 }
 
-void OpcoesPrincipal(Company semprarrolar)
+void opcoesPrincipal(Company &semprarrolar)
 {
 	unsigned int choice;
 	while (choice = menuPrincipal())
@@ -133,16 +126,16 @@ void OpcoesPrincipal(Company semprarrolar)
 			cout << endl;
 			break;
 		case 1:
-			menuGestaoLinhas(semprarrolar);
+			opcoesGestaoLinhas(semprarrolar);
 			break;
 		case 2:
-			menuGestaoCondutores(semprarrolar);
+			opcoesGestaoCondutores(semprarrolar);
 			break;
 		case 3:
-			menuOpcoesPercursos(semprarrolar);
+			opcoesPercursos(semprarrolar);
 			break;
 		case 4:
-			menuOpcoesLinha(semprarrolar);
+			opcoesVisualizarLinha(semprarrolar);
 			break;
 		case 5:
 			semprarrolar.visualizaCondutores();
@@ -153,7 +146,7 @@ void OpcoesPrincipal(Company semprarrolar)
 	}
 }
 
-unsigned int menuGestaoLinhas()
+char menuGestaoLinhas()
 {
 	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
@@ -178,9 +171,9 @@ unsigned int menuGestaoLinhas()
 	return choice;
 }
 
-void opcoesGestaoLinhas(Company semprarrolar)
+void opcoesGestaoLinhas(Company &semprarrolar)
 {
-	unsigned int choice;
+	char choice;
 	while (choice = menuGestaoLinhas())
 	{
 		switch (choice)
@@ -198,8 +191,9 @@ void opcoesGestaoLinhas(Company semprarrolar)
 	}
 }
 
-unsigned int menuGestaoCondutores()
+char menuGestaoCondutores()
 {
+	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
 	cout << "A. Criar condutor\n"
 		<< "B. Alterar condutor\n"
@@ -222,50 +216,179 @@ unsigned int menuGestaoCondutores()
 	return choice;
 }
 
-void opcoesGestaoCondutores(Company semprarrolar)
+void opcoesGestaoCondutores(Company &semprarrolar)
 {
-	unsigned int choice;
+	char choice;
 	while (choice = menuGestaoCondutores())
 	{
 		switch (choice)
 		{
 		case 'A':
-			semprarrolar.addDriver();
+		{
+			unsigned int id, maxHours, maxWeekWorkingTime, minRestTime;
+			int posDriver;
+			string driverName;
+			vector<Shift> vShifts;
+			do
+			{
+				cout << "ID do condutor a criar: ";
+				cin >> id;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID do condutor a criar: ";
+					cin >> id;
+				}
+
+				posDriver = semprarrolar.procuraIdVetorCondutores(id);
+
+				if (posDriver != -1)
+					cout << "O ID de condutor introduzido ja existe!" << endl;
+
+			} while (posDriver != -1);
+
+			// ignorar newline para introduzir strings
+			cin.ignore();
+
+			// introducao do nome do condutor
+			cout << "Nome do condutor: ";
+			getline(cin, driverName);
+
+			// introducao dos tempos dos turnos
+			cout << "Numero de horas consecutivas do turno diario: ";
+			cin >> maxHours;
+			while (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Numero de horas consecutivas do turno diario: ";
+				cin >> maxHours;
+			}
+
+			cout << "Numero maximo de horas por semana: ";
+			cin >> maxWeekWorkingTime;
+			while (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Numero maximo de horas por semana: ";
+				cin >> maxWeekWorkingTime;
+			}
+
+			cout << "Numero minimo horas de descanso entre turnos: ";
+			cin >> minRestTime;
+			while (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Numero minimo horas de descanso entre turnos: ";
+				cin >> minRestTime;
+			}
+
+			Driver newDriver(id, driverName, maxHours, maxWeekWorkingTime, minRestTime, vShifts);
+			semprarrolar.addDriver(newDriver);
 			break;
+		}
 		case 'B':
-			semprarrolar.changeDriver();
+		{
+			cout << endl;
+			if (semprarrolar.getDriversVector().size() == 0)
+			{
+				cout << "Nao existem condutores a alterar!\n";
+				return;
+			}
+
+			unsigned int driverId;
+			int posDriver = -1;
+			do
+			{
+				cout << "ID do condutor a alterar: ";
+				cin >> driverId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID do condutor a alterar: ";
+					cin >> driverId;
+				}
+
+				posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
+
+				if (posDriver == -1)
+					cout << "O ID de condutor introduzido nao existe!" << endl;
+
+			} while (posDriver == -1);
+
+			changeDriver(driverId, semprarrolar);
 			break;
+		}
 		case 'C':
-			semprarrolar.removeDriver();
+		{
+			if (semprarrolar.getDriversVector().size() == 0)
+			{
+				cout << "Nao existem condutores a remover!\n";
+			}
+			else
+			{
+				unsigned int driverId;
+				int posDriver;
+				do
+				{
+					cout << "ID do condutor a remover: ";
+					cin >> driverId;
+
+					while (cin.fail())
+					{
+						cin.clear();
+						cin.ignore(1000, '\n');
+						cout << "ID: ";
+						cin >> driverId;
+					}
+
+					posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
+
+					if (posDriver == -1)
+						cout << "Introduza um ID de condutor valido!" << endl;
+
+				} while (posDriver == -1);
+
+				removeDriver(posDriver, semprarrolar);
+			}
 			break;
+		}
 		}
 	}
 }
 
-unsigned int menuOpcoesVisualizarLinha()
+char menuOpcoesVisualizarLinha()
 {
 	cout << endl;
 	cout << "A. Visualizar informacao de linha\n"
 		<< "B. Visualizar horario de linha\n"
 		<< "# MENU ANTERIOR\n\n";
 
-	char newChoice;
+	char choice;
 	cout << "--> opcao ";
-	cin >> newChoice;
+	cin >> choice;
 
-	while (newChoice != 'A' && newChoice != 'B' && newChoice != '#')
+	while (choice != 'A' && choice != 'B' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
-		cin >> newChoice;
+		cin >> choice;
 	}
+
+	return choice;
 }
 
 void opcoesVisualizarLinha(Company semprarrolar)
 {
-	unsigned int choice;
+	char choice;
 	while (choice = menuOpcoesVisualizarLinha())
 	{
 		switch (choice)
@@ -280,8 +403,9 @@ void opcoesVisualizarLinha(Company semprarrolar)
 	}
 }
 
-unsigned int menuOpcoesPercursos()
+char menuOpcoesPercursos()
 {
+	cout << endl;
 	cout << "A. Pesquisar por paragem nas linhas\n"
 		<< "B. Visualizar percurso entre 2 paragens\n"
 		<< "C. Visualizar horario de paragem\n"
@@ -306,7 +430,7 @@ unsigned int menuOpcoesPercursos()
 
 void opcoesPercursos(Company semprarrolar)
 {
-	unsigned int choice;
+	char choice;
 	while (choice = menuOpcoesPercursos())
 	{
 		switch (choice)
@@ -359,3 +483,80 @@ Company createCompany()
 	Company semprarrolar(nameCompany, inCondutores, inLinhas);
 	return semprarrolar;
 }
+
+
+// -------------- CONDUTORES ------------------
+// altera condutor
+void changeDriver(unsigned int driverId, Company &semprarrolar)
+{
+	int posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
+
+	if (posDriver == -1)
+		cout << "Condutor inexistente" << endl;
+	else
+	{
+		// char para escolha de opcoes
+		char option;
+
+		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newId;
+			cout << "Insira o novo ID: ";
+			cin >> newId;
+			semprarrolar.getDriversVector().at(posDriver).setId(newId);
+		}
+
+		cout << "Alterar nome? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			string newName;
+			cout << "Insira o novo nome: ";
+			cin >> newName;
+			semprarrolar.getDriversVector().at(posDriver).setName(newName);
+		}
+
+		cout << "Alterar o numero de horas consecutivas de turno diario? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newMaxHours;
+			cout << "Insira o novo numero de horas consecutivas de turno diario: ";
+			cin >> newMaxHours;
+			semprarrolar.getDriversVector().at(posDriver).setMaxHours(newMaxHours);
+		}
+
+		cout << "Alterar o numero maximo de horas de trabalho por semana? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newMaxWeekHours;
+			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
+			cin >> newMaxWeekHours;
+			semprarrolar.getDriversVector().at(posDriver).setMaxWeekWorkingTime(newMaxWeekHours);
+		}
+
+		cout << "Alterar o numero minimo de horas de descanso entre turnos? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newMinRestTime;
+			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
+			cin >> newMinRestTime;
+			semprarrolar.getDriversVector().at(posDriver).setMinRestTime(newMinRestTime);
+		}
+	}
+}
+
+// remover condutor
+void removeDriver(int posDriver, Company &semprarrolar)
+{
+	if (semprarrolar.getDriversVector().size() == 0)
+		cout << "Nao existem condutores a remover!\n";
+	else
+		semprarrolar.getDriversVector().erase(semprarrolar.getDriversVector().begin() + posDriver);
+}
+
+// ---------------- LINHAS --------------------
