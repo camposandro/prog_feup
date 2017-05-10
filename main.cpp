@@ -26,6 +26,8 @@ char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
 void changeDriver(unsigned int driverId, Company &semprarrolar);
 void removeDriver(int posDriver, Company &semprarrolar);
+void changeLine(unsigned int lineId, Company &semprarrolar);
+void removeLine(unsigned int posLine, Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -179,14 +181,144 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 		switch (choice)
 		{
 		case 'A':
-			semprarrolar.addLine();
+		{
+			unsigned int id, freqBus;
+			int posLine;
+			do
+			{
+				cout << "ID do condutor a criar: ";
+				cin >> id;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID do condutor a criar: ";
+					cin >> id;
+				}
+
+				posLine = semprarrolar.procuraIdVetorCondutores(id);
+
+				if (posLine != -1) cout << "O ID de condutor introduzido ja existe!" << endl;
+
+			} while (posLine != -1);
+
+			// introducao da freq
+			cout << "Frequencia: ";
+			cin >> freqBus;
+			while (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Frequencia: ";
+				cin >> freqBus;
+			}
+
+			vector<string> busStopList;
+			vector<int> timesList;
+
+			int numParagem = 1;
+			string paragem;
+			cout << "(Escrever FIM para terminar)" << endl;
+			cout << "Paragem" << numParagem << ": ";
+			getline(cin, paragem);
+			while (paragem != "FIM")
+			{
+				busStopList.push_back(paragem);
+				numParagem++;
+				cout << "Paragem" << numParagem << ": ";
+				getline(cin, paragem);
+			}
+
+			if (busStopList.size() > 1) // se nParagens > 1
+			{
+				int nParagem = 1;
+				int nIntervalosTempo = timesList.size() - 1;
+				string intervaloTempo;
+
+				cout << "(Escrever FIM para terminar)" << endl;
+				while (nParagem <= nIntervalosTempo)
+				{
+					cout << "Tempo de viagem paragens " << nParagem << " e "
+						<< nParagem + 1 << ": ";
+					getline(cin, intervaloTempo);
+					timesList.push_back(stoi(intervaloTempo));
+					nParagem++;
+				}
+			}
+			
+			Line newLine(id,freqBus,busStopList,timesList);
+			semprarrolar.addLine(newLine);
 			break;
+		}
 		case 'B':
-			semprarrolar.changeLine();
+		{
+			cout << endl;
+			if (semprarrolar.getLinesVector().size() == 0)
+			{
+				cout << "Nao existem linhas a alterar!\n";
+				return;
+			}
+
+			unsigned int lineId;
+			int posLine = -1;
+			do
+			{
+				cout << "ID da linha a alterar: ";
+				cin >> lineId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID da linha a alterar: ";
+					cin >> lineId;
+				}
+
+				posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+				if (posLine == -1)
+					cout << "O ID da linha introduzido nao existe!" << endl;
+
+			} while (posLine == -1);
+
+			changeLine(lineId, semprarrolar);
 			break;
+		}
 		case 'C':
-			semprarrolar.removeLine();
+		{
+			if (semprarrolar.getLinesVector().size() == 0)
+			{
+				cout << "Nao existem linhas a remover!\n";
+				return;
+			}
+			else
+			{
+				unsigned int lineId;
+				int posLine;
+				do
+				{
+					cout << "ID da linha a remover: ";
+					cin >> lineId;
+
+					while (cin.fail())
+					{
+						cin.clear();
+						cin.ignore(1000, '\n');
+						cout << "ID da linha a remover: ";
+						cin >> lineId;
+					}
+
+					posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+					if (posLine == -1) cout << "Introduza um ID de condutor valido!" << endl;
+
+				} while (posLine == -1);
+
+				removeDriver(posLine, semprarrolar);
+			}
 			break;
+		}
 		}
 	}
 }
@@ -317,8 +449,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 
 				posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
 
-				if (posDriver == -1)
-					cout << "O ID de condutor introduzido nao existe!" << endl;
+				if (posDriver == -1) cout << "O ID de condutor introduzido nao existe!" << endl;
 
 			} while (posDriver == -1);
 
@@ -330,6 +461,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 			if (semprarrolar.getDriversVector().size() == 0)
 			{
 				cout << "Nao existem condutores a remover!\n";
+				return;
 			}
 			else
 			{
@@ -484,7 +616,6 @@ Company createCompany()
 	return semprarrolar;
 }
 
-
 // -------------- CONDUTORES ------------------
 // altera condutor
 void changeDriver(unsigned int driverId, Company &semprarrolar)
@@ -553,10 +684,87 @@ void changeDriver(unsigned int driverId, Company &semprarrolar)
 // remover condutor
 void removeDriver(int posDriver, Company &semprarrolar)
 {
-	if (semprarrolar.getDriversVector().size() == 0)
-		cout << "Nao existem condutores a remover!\n";
-	else
-		semprarrolar.getDriversVector().erase(semprarrolar.getDriversVector().begin() + posDriver);
+	semprarrolar.getDriversVector().erase(semprarrolar.getDriversVector().begin() + posDriver);
 }
 
 // ---------------- LINHAS --------------------
+void changeLine(unsigned int lineId, Company &semprarrolar)
+{
+	int posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+	if (posLine == -1)
+		cout << "Linha inexistente" << endl;
+	else
+	{
+		// char para escolha de opcoes
+		char option;
+
+		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newId;
+			cout << "Insira o novo ID: ";
+			cin >> newId;
+			semprarrolar.getLinesVector().at(posLine).setId(newId);
+		}
+
+		cout << "Alterar frequencia? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			unsigned int newFreq;
+			cout << "Insira a nova frequencia: ";
+			cin >> newFreq;
+			semprarrolar.getLinesVector().at(posLine).setFreqBus(newFreq);
+		}
+
+		// ignorar newline para introduzir strings
+		cin.ignore();
+
+		cout << "Alterar paragens? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 'y' || option == 'Y')
+		{
+			// introducao de paragens
+			vector<string> newBusStopList;
+			int numParagem = 1;
+			string paragem;
+			cout << "(Escrever FIM para terminar)" << endl;
+
+			cout << "Paragem" << numParagem << ": ";
+			getline(cin, paragem);
+			while (paragem != "FIM")
+			{
+				newBusStopList.push_back(paragem);
+				numParagem++;
+				cout << "Paragem" << numParagem << ": ";
+				getline(cin, paragem);
+			}
+
+			// introducao dos tempos
+			vector<int> newTimesList;
+			int nParagem = 1, nIntervalosTempo = newBusStopList.size() - 1;
+			string intervaloTempo;
+			if (newBusStopList.size() > 1) // se nParagens > 1
+			{
+				cout << "(Escrever FIM para terminar)" << endl;
+				while (nParagem <= nIntervalosTempo)
+				{
+					cout << "Tempo de viagem paragens " << nParagem << " e "
+						<< nParagem + 1 << ": ";
+					getline(cin, intervaloTempo);
+					newTimesList.push_back(stoi(intervaloTempo));
+					nParagem++;
+				}
+			}
+			semprarrolar.getLinesVector().at(posLine).setBusStopList(newBusStopList);
+			semprarrolar.getLinesVector().at(posLine).setTimesList(newTimesList);
+		}
+	}
+}
+
+void removeLine(unsigned int posLine, Company &semprarrolar)
+{
+	semprarrolar.getLinesVector().erase(semprarrolar.getLinesVector().begin() + posLine);
+}

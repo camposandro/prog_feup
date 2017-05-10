@@ -35,7 +35,6 @@ Driver::Driver(string textLine)
 }
 // ------------------------
 
-
 //////////////
 // set methods
 //////////////
