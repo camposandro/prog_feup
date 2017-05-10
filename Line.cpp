@@ -60,6 +60,11 @@ void Line::setId(unsigned int id)
 	this->id = id;
 }
 
+void Line::setFreqBus(unsigned int freqBus)
+{
+	this->freqBus = freqBus;
+}
+
 void Line::setBusStopList(vector<string> busStopList)
 {
 	this->busStopList = busStopList;
@@ -76,6 +81,11 @@ void Line::setTimesList(vector<int> timeList)
 unsigned int Line::getId() const
 {
   return id;
+}
+
+unsigned int Line::getFreqBus() const
+{
+	return freqBus;
 }
 
 vector<string> Line::getBusStops() const

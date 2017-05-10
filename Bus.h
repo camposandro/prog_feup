@@ -23,7 +23,8 @@ class Bus
   unsigned int getLineId() const;
   vector<Shift> getSchedule() const;
   // set methods
-    unsigned int setDriverId() const;
-    unsigned int setLineId() const;
+  void setOrderInLine(unsigned int orderInLine);
+  void setDriverId(unsigned int driverId);
+  void setLineId(unsigned int lineId);
   // other methods
 };

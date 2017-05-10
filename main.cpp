@@ -12,31 +12,49 @@
 using namespace std;
 
 // protótipos das funções do main
-void openFiles();
 void definirHorario();
-void menu();
+Company createCompany();
+unsigned int menuPrincipal();
+void menuGestaoLinhas(Company semprarrolar);
+void menuGestaoCondutores(Company semprarrolar);
+void menuOpcoesLinha(Company semprarrolar);
+void menuOpcoesPercursos(Company semprarrolar);
+
+// variáveis globais
+string nameCompany;
+string inCondutores;
+string inLinhas;
+unsigned int horaInicio, horaFim;
 
 int main()
 {
-	cout << "--- EMPRESA DE TRANSPORTES SEMPRARROLAR ---\n" << endl;
+	cout << "Nome da companhia: ";
+	getline(cin, nameCompany);
 
-	// ler os ficheiros
-	openFiles();
+	cout << "--- EMPRESA DE TRANSPORTES " + nameCompany + " ---\n" << endl;
+
+	// ler os ficheiros e criar companhia
+	Company semprarrolar = createCompany();
+
 	// definir horario de funcionamento
 	definirHorario();
 	
-	menu();
+	// chamar menu com companhia
+	menuPrincipal();
 
 	// testes
-	Company abc ("abc", "condutores", "linhas");
-	abc.addDriver();
-	abc.addLine();
-	abc.visualizaCondutores();
-	abc.visualizaLinhas();
-	abc.removeDriver();
-	abc.removeLine();
-	abc.visualizaCondutores();
-	abc.visualizaLinhas();
+	semprarrolar.addDriver();
+	semprarrolar.addLine();
+	semprarrolar.visualizaCondutores();
+	semprarrolar.visualizaLinhas();
+	semprarrolar.changeDriver();
+	semprarrolar.changeLine();
+	semprarrolar.visualizaCondutores();
+	semprarrolar.visualizaLinhas();
+	semprarrolar.removeDriver();
+	semprarrolar.removeLine();
+	semprarrolar.visualizaCondutores();
+	semprarrolar.visualizaLinhas();
 
 	// falta alterar linhas e condutores, horarios ...
 	// falta atualizar ficheiros no final
@@ -44,10 +62,41 @@ int main()
 	return 0;
 }
 
-// menu principal
-void menu()
+// definir horario de inicio e fim de serviço
+void definirHorario()
 {
-	cout << endl;
+	unsigned int horaDeInicio;
+	cout << "Horario de inicio de servico: ";
+	cin >> horaDeInicio;
+
+	while (cin.fail() || horaDeInicio > 23 || horaDeInicio < 0)
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma hora valida!\n";
+		cout << "Horario de inicio de servico: ";
+		cin >> horaDeInicio;
+	}
+	horaInicio = horaDeInicio;
+
+	unsigned int horaDeFim;
+	cout << "Horario de fim de servico: ";
+	cin >> horaDeFim;
+
+	while (cin.fail() || horaDeFim > 23 || horaDeFim < 0)
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma hora valida!\n";
+		cout << "Horario de fim de servico: ";
+		cin >> horaDeFim;
+	}
+	horaFim = horaDeFim;
+}
+
+// menus
+unsigned int menuPrincipal()
+{
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
 	cout << "1. Gestao de linhas\n"
 		<< "2. Gestao de condutores\n"
@@ -57,7 +106,7 @@ void menu()
 		<< "0. Sair\n";
 	cout << endl;
 
-	int choice;
+	unsigned int choice;
 	cout << "--> opcao ";
 	cin >> choice;
 
@@ -67,37 +116,44 @@ void menu()
 		cout << "--> opcao ";
 		cin >> choice;
 	}
+	
+	return choice;
+}
 
-	switch (choice)
+void OpcoesPrincipal(Company semprarrolar)
+{
+	unsigned int choice;
+	while (choice = menuPrincipal())
 	{
-	case 0:
-		// atualizaFicheiroLinhas();
-		// atualizaFicheiroCondutores();
-		cout << endl;
-		break;
-	case 1:
-		//menuGestaoLinhas();
-		break;
-	case 2:
-		//menuGestaoCondutores();
-		break;
-	case 3:
-		//menuOpcoesPercursos();
-		break;
-	case 4:
-		//menuOpcoesLinha();
-		break;
-	case 5:
-		// visualizaCondutores();
-		break;
-	default:
-		cout << "Introduza uma opcao valida!\n";
+		switch (choice)
+		{
+		case 0:
+			semprarrolar.atualizaFicheiroCondutores(inCondutores);
+			semprarrolar.atualizaFicheiroLinhas(inLinhas);
+			cout << endl;
+			break;
+		case 1:
+			menuGestaoLinhas(semprarrolar);
+			break;
+		case 2:
+			menuGestaoCondutores(semprarrolar);
+			break;
+		case 3:
+			menuOpcoesPercursos(semprarrolar);
+			break;
+		case 4:
+			menuOpcoesLinha(semprarrolar);
+			break;
+		case 5:
+			semprarrolar.visualizaCondutores();
+			break;
+		default:
+			cout << "Introduza uma opcao valida!\n";
+		}
 	}
 }
 
-// resto dos menus
-/*
-void menuGestaoLinhas()
+unsigned int menuGestaoLinhas()
 {
 	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
@@ -106,76 +162,87 @@ void menuGestaoLinhas()
 		<< "C. Remover linha\n"
 		<< "# MENU ANTERIOR\n\n";
 
-	char opcao;
+	char choice;
 	cout << "--> opcao ";
-	cin >> opcao;
+	cin >> choice;
 
-	while (opcao != 'A' && opcao != 'B' && opcao != 'C' && opcao != '#')
+	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
-		cin >> opcao;
+		cin >> choice;
 	}
 
-	switch (opcao)
+	return choice;
+}
+
+void opcoesGestaoLinhas(Company semprarrolar)
+{
+	unsigned int choice;
+	while (choice = menuGestaoLinhas())
 	{
-	case '#':
-		menu();
-		break;
-	case 'A':
-		//createLine();
-		break;
-	case 'B':
-		//alteraLinha();
-		break;
-	case 'C':
-		//removeLinha();
-		break;
+		switch (choice)
+		{
+		case 'A':
+			semprarrolar.addLine();
+			break;
+		case 'B':
+			semprarrolar.changeLine();
+			break;
+		case 'C':
+			semprarrolar.removeLine();
+			break;
+		}
 	}
 }
 
-void menuGestaoCondutores()
+unsigned int menuGestaoCondutores()
 {
-	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
 	cout << "A. Criar condutor\n"
 		<< "B. Alterar condutor\n"
 		<< "C. Remover condutor\n"
 		<< "# MENU ANTERIOR\n\n";
 
-	char opcao;
+	char choice;
 	cout << "--> opcao ";
-	cin >> opcao;
+	cin >> choice;
 
-	while (opcao != 'A' && opcao != 'B' && opcao != 'C' && opcao != '#')
+	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
-		cin >> opcao;
+		cin >> choice;
 	}
 
-	switch (opcao)
+	return choice;
+}
+
+void opcoesGestaoCondutores(Company semprarrolar)
+{
+	unsigned int choice;
+	while (choice = menuGestaoCondutores())
 	{
-	case '#':
-		menu();
-		break;
-	case 'A':
-		//criaCondutor();
-		break;
-	case 'B':
-		//alteraCondutor();
-		break;
-	case 'C':
-		//removeCondutor();
-		break;
+		switch (choice)
+		{
+		case 'A':
+			semprarrolar.addDriver();
+			break;
+		case 'B':
+			semprarrolar.changeDriver();
+			break;
+		case 'C':
+			semprarrolar.removeDriver();
+			break;
+		}
 	}
 }
 
-void menuOpcoesLinha()
+unsigned int menuOpcoesVisualizarLinha()
 {
 	cout << endl;
 	cout << "A. Visualizar informacao de linha\n"
@@ -194,71 +261,78 @@ void menuOpcoesLinha()
 		cout << "--> opcao ";
 		cin >> newChoice;
 	}
+}
 
-	switch (newChoice)
+void opcoesVisualizarLinha(Company semprarrolar)
+{
+	unsigned int choice;
+	while (choice = menuOpcoesVisualizarLinha())
 	{
-	case '#':
-		menu();
-		break;
-	case 'A':
-		//visualizaLinhas();
-		break;
-	case 'B':
-		//horarioLinha();
-		break;
+		switch (choice)
+		{
+		case 'A':
+			semprarrolar.visualizaLinhas();
+			break;
+		case 'B':
+			//semprarrolar.horarioLinha();
+			break;
+		}
 	}
 }
 
-void menuOpcoesPercursos()
+unsigned int menuOpcoesPercursos()
 {
-	cout << endl;
 	cout << "A. Pesquisar por paragem nas linhas\n"
 		<< "B. Visualizar percurso entre 2 paragens\n"
 		<< "C. Visualizar horario de paragem\n"
 		<< "# MENU ANTERIOR\n";
 	cout << endl;
 
-	char newChoice;
+	char choice;
 	cout << "--> opcao ";
-	cin >> newChoice;
+	cin >> choice;
 
-	while (newChoice != 'A' && newChoice != 'B' && newChoice != 'C' && newChoice != '#')
+	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
-		cin >> newChoice;
+		cin >> choice;
 	}
 
-	switch (newChoice)
+	return choice;
+}
+
+void opcoesPercursos(Company semprarrolar)
+{
+	unsigned int choice;
+	while (choice = menuOpcoesPercursos())
 	{
-	case '#':
-		menu();
-		break;
-	case 'A':
-		//pesquisaParagem();
-		break;
-	case 'B':
-		//percursoEntreParagens();
-		break;
-	case 'C':
-		//horarioParagem();
-		break;
+		switch (choice)
+		{
+		case 'A':
+			semprarrolar.pesquisaParagem();
+			break;
+		case 'B':
+			//semprarrolar.percursoEntreParagens();
+			break;
+		case 'C':
+			//semprarrolar.horarioParagem();
+			break;
+		}
 	}
 }
-*/
 
 // abrir ficheiros de linhas e condutores
-void openFiles()
+Company createCompany()
 {
 	// OPENING OF THE INPUT FILE - CONDUTORES
-	string inCondutores;
-	cout << "Nome do ficheiro de condutores a abrir ? (.txt)\n";
+	cout << "Nome do ficheiro de condutores a abrir ? \n";
 	cout << "--> ";
 	getline(cin, inCondutores);
 
-	ifstream fCondutores(inCondutores + ".txt");
+	ifstream fCondutores(inCondutores);
 	if (fCondutores.fail())
 	{
 		cerr << "Erro ao abrir o ficheiro de condutores!" << endl;
@@ -269,12 +343,11 @@ void openFiles()
 	// --------------------------------------------------------
 
 	// OPENING OF THE INPUT FILE - LINHAS
-	string inLinhas;
-	cout << "Nome do ficheiro de linhas a abrir ? (.txt)\n";
+	cout << "Nome do ficheiro de linhas a abrir ? \n";
 	cout << "--> ";
 	getline(cin, inLinhas);
 
-	ifstream fLinhas(inLinhas + ".txt");
+	ifstream fLinhas(inLinhas);
 	if (fLinhas.fail())
 	{
 		cerr << "Erro ao abrir o ficheiro de linhas!" << endl;
@@ -282,37 +355,7 @@ void openFiles()
 		_getch();
 		exit(1);
 	}
-}
 
-// definir horario de inicio e fim de serviço
-int horaInicio, horaFim;
-void definirHorario()
-{
-	int horaDeInicio;
-	cout << "Horario de inicio de servico: ";
-	cin >> horaDeInicio;
-
-	while (cin.fail() || horaDeInicio > 23 || horaDeInicio < 0)
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma hora valida!\n";
-		cout << "Horario de inicio de servico: ";
-		cin >> horaDeInicio;
-	}
-	horaInicio = horaDeInicio;
-
-	int horaDeFim;
-	cout << "Horario de fim de servico: ";
-	cin >> horaDeFim;
-
-	while (cin.fail() || horaDeFim > 23 || horaDeFim < 0)
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma hora valida!\n";
-		cout << "Horario de fim de servico: ";
-		cin >> horaDeFim;
-	}
-	horaFim = horaDeFim;
+	Company semprarrolar(nameCompany, inCondutores, inLinhas);
+	return semprarrolar;
 }

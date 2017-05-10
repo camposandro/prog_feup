@@ -28,8 +28,8 @@ class Company
   void pesquisaParagem();
   // metodos get
   string getName() const;
-  void visualizaCondutores();
-  void visualizaLinhas();
+  void visualizaCondutores() const;
+  void visualizaLinhas() const;
   // metodos set
   void setName(string name);
   vector<Line> obterLinhas(string fileLines);
@@ -37,15 +37,19 @@ class Company
   // funções auxiliares
   void obterParametrosDriver(unsigned int &id, string &name, unsigned int &maxHours, unsigned int &maxWeekWorkingTime, unsigned int &minRestTime, vector<Shift> &shifts);
   void obterParametrosLinha(unsigned int &id, unsigned int &freqBus, vector<string> &busStopList, vector<int> &timesList);
+  void obterParamAlterarDriver(unsigned int &newID, string &newName, unsigned int &newMaxHours, unsigned int &newMaxWeekHours, unsigned int &newMinRestTime);
+  void obterParamAlterarLinha(unsigned int& newID, unsigned int &newFreqBus, vector<string>& newBusStopList, vector<int>& newTimesList);
   unsigned int obterPosCondutorAlterar();
   unsigned int obterPosCondutorRemover();
   unsigned int obterPosLinhaAlterar();
   unsigned int obterPosLinhaRemover();
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);
-  unsigned int procuraIdVetorLinhas(int idLinha);
+  unsigned int procuraIdVetorLinhas(unsigned int idLinha);
   vector<int> procuraNomeVetorLinhas(string nomeParagem);
   void obterNomeParagem(string &nomeParagem);
   // outros métodos
+  void atualizaFicheiroCondutores(string fileDrivers);
+  void atualizaFicheiroLinhas(string fileLines);
   void driversBubblesort();
   void linesBubblesort();
   void serviceDistribution(); // funcao que implementa a afectacao de servico

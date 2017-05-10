@@ -18,14 +18,15 @@ class Line
   Line(string textLine);
   // set methods
   void setId(unsigned int id);
+  void setFreqBus(unsigned int freqBus);
   void setBusStopList(vector<string> busStopList);
   void setTimesList(vector<int> timeList);
   // get methods
   unsigned int getId() const;
+  unsigned int getFreqBus() const;
   vector<string> getBusStops() const;
   vector<int> getTimings() const;
   // other methods
   vector<string> obterParagens(vector<string> busStopList);
   vector<int> obterTempos(vector<int> timesList);
-  unsigned int pesquisaParagem(string nomeParagem);
 };
