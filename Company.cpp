@@ -19,12 +19,14 @@ Company::Company(string name, string fileDrivers, string fileLines)
 void Company::addDriver(Driver newDriver)
 {
 	vectorDrivers.push_back(newDriver);
+	driversBubblesort();
 }
 
 // cria linha
 void Company::addLine(Line newLine)
 {
 	vectorLines.push_back(newLine);
+	linesBubblesort();
 }
 
 // pesquisa por paragem
@@ -261,74 +263,6 @@ vector<Driver> Company::obterCondutores(string fileDrivers)
 ////////////////////////////
 // outros metodos
 ///////////////////////////
-/*
-void Company::atualizaFicheiroCondutores(string fileDrivers)
-{
-	char escolha;
-	cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
-	cin >> escolha;
-
-	while (cin.fail() || escolha != 'S' && escolha != 'N')
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma opcao valida!\n";
-		cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
-		cin >> escolha;
-	}
-
-	if (escolha == 'S')
-	{
-		// escrever no ficheiro (opcional)
-		ofstream ficheiroSaida(fileDrivers);
-		for (size_t i = 0; i < vectorDrivers.size(); i++)
-		{
-			ficheiroSaida << vectorDrivers.at(i).getId() << " ; " << vectorDrivers.at(i).getName() << " ; " <<
-				vectorDrivers.at(i).getShiftMaxDuration() << " ; " << vectorDrivers.at(i).getMaxWeekWorkingTime()
-				<< " ; " << vectorDrivers.at(i).getMinRestTime() << endl;
-		}
-	}
-}
-
-void Company::atualizaFicheiroLinhas(string fileLines)
-{
-	char escolha;
-	cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
-	cin >> escolha;
-
-	while (cin.fail() || escolha != 'S' && escolha != 'N')
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma opcao valida!\n";
-		cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
-		cin >> escolha;
-	}
-
-	if (escolha == 'S')
-	{
-		// escrever no ficheiro (opcional)
-		ofstream ficheiroSaida(fileLines);
-		for (size_t i = 0; i < vectorLines.size(); i++)
-		{
-			ficheiroSaida << vectorLines.at(i).getId() << " ; " << vectorLines.at(i).getFreqBus() << " ; ";
-			for (size_t j = 0; j < vectorLines.at(i).getBusStops().size(); j++)
-			{
-				if (j == vectorLines.at(i).getBusStops().size() - 1)
-					ficheiroSaida << vectorLines.at(i).getBusStops().at(j) << "; ";
-				else ficheiroSaida << vectorLines.at(i).getBusStops().at(j) << ", ";
-			}
-			for (size_t k = 0; k < vectorLines.at(i).getTimings().size(); k++)
-			{
-				if (k == vectorLines.at(i).getTimings().size() - 1)
-					ficheiroSaida << vectorLines.at(i).getTimings().at(k) << endl;
-				else ficheiroSaida << vectorLines.at(i).getTimings().at(k) << ", ";
-			}
-		}
-	}
-}
-*/
-
 void Company::obterNomeParagem(string &nomeParagem)
 {
 	cin.ignore();

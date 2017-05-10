@@ -194,20 +194,20 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 			int posLine;
 			do
 			{
-				cout << "ID do condutor a criar: ";
+				cout << "ID da linha a criar: ";
 				cin >> id;
 
 				while (cin.fail())
 				{
 					cin.clear();
 					cin.ignore(1000, '\n');
-					cout << "ID do condutor a criar: ";
+					cout << "D da linha a criar: ";
 					cin >> id;
 				}
 
 				posLine = semprarrolar.procuraIdVetorCondutores(id);
 
-				if (posLine != -1) cout << "O ID de condutor introduzido ja existe!" << endl;
+				if (posLine != -1) cout << "O ID de linha introduzido ja existe!" << endl;
 
 			} while (posLine != -1);
 
@@ -221,6 +221,8 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 				cout << "Frequencia: ";
 				cin >> freqBus;
 			}
+
+			cin.ignore();
 
 			vector<string> busStopList;
 			vector<int> timesList;
@@ -751,6 +753,7 @@ void changeDriver(unsigned int driverId, Company &semprarrolar)
 void removeDriver(int posDriver, Company &semprarrolar)
 {
 	semprarrolar.getDriversVector().erase(semprarrolar.getDriversVector().begin() + posDriver);
+	semprarrolar.driversBubblesort();
 }
 
 // ---------------- LINHAS --------------------
@@ -833,6 +836,7 @@ void changeLine(unsigned int lineId, Company &semprarrolar)
 void removeLine(unsigned int posLine, Company &semprarrolar)
 {
 	semprarrolar.getLinesVector().erase(semprarrolar.getLinesVector().begin() + posLine);
+	semprarrolar.linesBubblesort();
 }
 
 void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar)
