@@ -14,8 +14,8 @@
 using namespace std;
 
 // protótipos das funções do main
-Company createCompany();
 void definirHorario();
+Company createCompany();
 unsigned int menuPrincipal();
 void opcoesPrincipal(Company &semprarrolar);
 char menuGestaoLinhas();
@@ -26,10 +26,6 @@ char menuOpcoesVisualizarLinha();
 void opcoesVisualizarLinha(Company semprarrolar);
 char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
-void changeDriver(unsigned int driverId, Company &semprarrolar);
-void removeDriver(int posDriver, Company &semprarrolar);
-void changeLine(unsigned int lineId, Company &semprarrolar);
-void removeLine(unsigned int posLine, Company &semprarrolar);
 void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar);
 void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company semprarrolar);
 void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar);
@@ -98,7 +94,43 @@ void definirHorario()
 	horaFim = horaDeFim;
 }
 
-// menus
+// abrir ficheiros de linhas e condutores
+Company createCompany()
+{
+	// OPENING OF THE INPUT FILE - CONDUTORES
+	cout << "Nome do ficheiro de condutores a abrir ? \n";
+	cout << "--> ";
+	getline(cin, inCondutores);
+
+	ifstream fCondutores(inCondutores);
+	if (fCondutores.fail())
+	{
+		cerr << "Erro ao abrir o ficheiro de condutores!" << endl;
+		cout << "Pressione uma tecla para sair ...\n";
+		_getch();
+		exit(1);
+	}
+	// --------------------------------------------------------
+
+	// OPENING OF THE INPUT FILE - LINHAS
+	cout << "Nome do ficheiro de linhas a abrir ? \n";
+	cout << "--> ";
+	getline(cin, inLinhas);
+
+	ifstream fLinhas(inLinhas);
+	if (fLinhas.fail())
+	{
+		cerr << "Erro ao abrir o ficheiro de linhas!" << endl;
+		cout << "Pressione uma tecla para sair ...\n";
+		_getch();
+		exit(1);
+	}
+
+	Company semprarrolar(nameCompany, inCondutores, inLinhas);
+	return semprarrolar;
+}
+
+// ---- menus -----
 unsigned int menuPrincipal()
 {
 	cout << endl;
@@ -201,11 +233,11 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 				{
 					cin.clear();
 					cin.ignore(1000, '\n');
-					cout << "D da linha a criar: ";
+					cout << "ID da linha a criar: ";
 					cin >> id;
 				}
 
-				posLine = semprarrolar.procuraIdVetorCondutores(id);
+				posLine = semprarrolar.procuraIdVetorLinhas(id);
 
 				if (posLine != -1) cout << "O ID de linha introduzido ja existe!" << endl;
 
@@ -240,30 +272,26 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 				getline(cin, paragem);
 			}
 
-			if (busStopList.size() > 1) // se nParagens > 1
-			{
-				int nParagem = 1;
-				int nIntervalosTempo = timesList.size() - 1;
-				string intervaloTempo;
+			int nParagem = 1;
+			int nIntervalosTempo = busStopList.size() - 1;
+			string intervaloTempo;
 
-				cout << "(Escrever FIM para terminar)" << endl;
-				while (nParagem <= nIntervalosTempo)
-				{
-					cout << "Tempo de viagem paragens " << nParagem << " e "
-						<< nParagem + 1 << ": ";
-					getline(cin, intervaloTempo);
-					timesList.push_back(stoi(intervaloTempo));
-					nParagem++;
-				}
+			cout << "(Escrever FIM para terminar)" << endl;
+			while (nParagem <= nIntervalosTempo)
+			{
+				cout << "Tempo de viagem paragens " << nParagem << " e "
+					<< nParagem + 1 << ": ";
+				getline(cin, intervaloTempo);
+				timesList.push_back(stoi(intervaloTempo));
+				nParagem++;
 			}
-			
-			Line newLine(id,freqBus,busStopList,timesList);
+
+			Line newLine(id, freqBus, busStopList, timesList);
 			semprarrolar.addLine(newLine);
 			break;
 		}
 		case 'B':
 		{
-			cout << endl;
 			if (semprarrolar.getLinesVector().size() == 0)
 			{
 				cout << "Nao existem linhas a alterar!\n";
@@ -292,7 +320,7 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 
 			} while (posLine == -1);
 
-			changeLine(lineId, semprarrolar);
+			semprarrolar.changeLine(lineId);
 			break;
 		}
 		case 'C':
@@ -321,11 +349,11 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 
 					posLine = semprarrolar.procuraIdVetorLinhas(lineId);
 
-					if (posLine == -1) cout << "Introduza um ID de condutor valido!" << endl;
+					if (posLine == -1) cout << "Introduza um ID de linha valido!" << endl;
 
 				} while (posLine == -1);
 
-				removeDriver(posLine, semprarrolar);
+				semprarrolar.removeLine(posLine);
 			}
 			break;
 		}
@@ -437,7 +465,6 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 		}
 		case 'B':
 		{
-			cout << endl;
 			if (semprarrolar.getDriversVector().size() == 0)
 			{
 				cout << "Nao existem condutores a alterar!\n";
@@ -465,7 +492,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 
 			} while (posDriver == -1);
 
-			changeDriver(driverId, semprarrolar);
+			semprarrolar.changeDriver(driverId);
 			break;
 		}
 		case 'C':
@@ -499,7 +526,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 
 				} while (posDriver == -1);
 
-				removeDriver(posDriver, semprarrolar);
+				semprarrolar.removeDriver(posDriver);
 			}
 			break;
 		}
@@ -608,11 +635,92 @@ void opcoesPercursos(Company semprarrolar)
 		switch (choice)
 		{
 		case 'A':
-			semprarrolar.pesquisaParagem();
+		{
+			cin.ignore();
+			string nomeParagem;
+			cout << "Introduza o nome da paragem a pesquisar: ";
+			getline(cin, nomeParagem);
+
+			// vetor que contem os ids das linhas que contiverem a paragem
+			vector<int> idLinhasComParagem = semprarrolar.procuraNomeVetorLinhas(nomeParagem);
+
+			if (idLinhasComParagem.size() == 0)
+				cout << "Nao foi encontrada nenhuma paragem com o nome dado ...\n";
+			else
+				semprarrolar.pesquisaParagem(nomeParagem, idLinhasComParagem);
+
 			break;
+		}
 		case 'B':
-			semprarrolar.percursoEntreParagens();
+		{
+			cin.ignore(); // para limpar o buffer do char anterior
+
+			string nomeParagem1, nomeParagem2;
+			cout << "Introduza o nome da paragem de partida: ";
+			getline(cin, nomeParagem1);
+
+			cout << "Introduza o nome da paragem de destino: ";
+			getline(cin, nomeParagem2);
+
+			// verificar se pertencem a mesma linha
+			// vetor que contem as pos das linhas que contiverem a paragem1 e paragem2
+			vector<int> LinhasParagem1 = semprarrolar.procuraNomeVetorLinhas(nomeParagem1);
+			vector<int> LinhasParagem2 = semprarrolar.procuraNomeVetorLinhas(nomeParagem2);
+
+			// verificar se existem linhas em comum e caso existam, guardar num vetor LinhasComum
+			vector<int> LinhasComum;
+			for (size_t i = 0; i < LinhasParagem1.size(); i++)
+			{
+				for (size_t j = 0; j < LinhasParagem2.size(); j++)
+				{
+					if (LinhasParagem1.at(i) == LinhasParagem2.at(j))
+						LinhasComum.push_back(LinhasParagem1.at(i));
+				}
+			}
+
+			if (LinhasComum.size() == 0)
+				cout << endl << "Nao existem linhas constituidas por ambas as paragens!\n";
+			else
+			{
+				// coloca o nomeParagem1 a minuscula
+				string nomeParagem1Minuscula = nomeParagem1;
+				for (size_t k = 0; k <= nomeParagem1.length(); k++)
+					nomeParagem1Minuscula[k] = tolower(nomeParagem1[k]);
+
+				// coloca o nomeParagem2 a minuscula
+				string nomeParagem2Minuscula = nomeParagem2;
+				for (size_t k = 0; k <= nomeParagem2.length(); k++)
+					nomeParagem2Minuscula[k] = tolower(nomeParagem2[k]);
+
+				// percorre vetor de posicoes das linhas que contêm ambas as paragens
+				for (size_t i = 0; i < LinhasComum.size(); i++)
+				{
+					Line linhaEmComum = semprarrolar.getLinesVector().at(LinhasComum.at(i));
+
+					// encontrar posicoes respetivas na linha
+					int posParagem1, posParagem2;
+					for (size_t j = 0; j < linhaEmComum.getBusStops().size(); j++)
+					{
+						// colocar cada elemento procurado no vetor em minuscula
+						string paragemVetor = linhaEmComum.getBusStops().at(j);
+						for (int p = 0; p < paragemVetor.length(); p++)
+							paragemVetor[p] = tolower(linhaEmComum.getBusStops().at(j).at(p));
+
+						if (paragemVetor == nomeParagem1Minuscula)
+							posParagem1 = j;
+						if (paragemVetor == nomeParagem2Minuscula)
+							posParagem2 = j;
+					}
+
+					cout << endl;
+					if (posParagem1 == posParagem2)
+						cout << "Introduza diferentes paragens!\n";
+					else
+						semprarrolar.percursoEntreParagens(linhaEmComum, posParagem1, posParagem2);
+				}
+			}
 			break;
+		}
 		case 'C':
 		{
 			cin.ignore();
@@ -648,197 +756,7 @@ void opcoesPercursos(Company semprarrolar)
 	}
 }
 
-// abrir ficheiros de linhas e condutores
-Company createCompany()
-{
-	// OPENING OF THE INPUT FILE - CONDUTORES
-	cout << "Nome do ficheiro de condutores a abrir ? \n";
-	cout << "--> ";
-	getline(cin, inCondutores);
-
-	ifstream fCondutores(inCondutores);
-	if (fCondutores.fail())
-	{
-		cerr << "Erro ao abrir o ficheiro de condutores!" << endl;
-		cout << "Pressione uma tecla para sair ...\n";
-		_getch();
-		exit(1);
-	}
-	// --------------------------------------------------------
-
-	// OPENING OF THE INPUT FILE - LINHAS
-	cout << "Nome do ficheiro de linhas a abrir ? \n";
-	cout << "--> ";
-	getline(cin, inLinhas);
-
-	ifstream fLinhas(inLinhas);
-	if (fLinhas.fail())
-	{
-		cerr << "Erro ao abrir o ficheiro de linhas!" << endl;
-		cout << "Pressione uma tecla para sair ...\n";
-		_getch();
-		exit(1);
-	}
-
-	Company semprarrolar(nameCompany, inCondutores, inLinhas);
-	return semprarrolar;
-}
-
-// -------------- CONDUTORES ------------------
-// altera condutor
-void changeDriver(unsigned int driverId, Company &semprarrolar)
-{
-	int posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
-
-	if (posDriver == -1)
-		cout << "Condutor inexistente" << endl;
-	else
-	{
-		// char para escolha de opcoes
-		char option;
-
-		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newId;
-			cout << "Insira o novo ID: ";
-			cin >> newId;
-			semprarrolar.getDriversVector().at(posDriver).setId(newId);
-		}
-
-		cout << "Alterar nome? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			string newName;
-			cout << "Insira o novo nome: ";
-			cin >> newName;
-			semprarrolar.getDriversVector().at(posDriver).setName(newName);
-		}
-
-		cout << "Alterar o numero de horas consecutivas de turno diario? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newMaxHours;
-			cout << "Insira o novo numero de horas consecutivas de turno diario: ";
-			cin >> newMaxHours;
-			semprarrolar.getDriversVector().at(posDriver).setMaxHours(newMaxHours);
-		}
-
-		cout << "Alterar o numero maximo de horas de trabalho por semana? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newMaxWeekHours;
-			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
-			cin >> newMaxWeekHours;
-			semprarrolar.getDriversVector().at(posDriver).setMaxWeekWorkingTime(newMaxWeekHours);
-		}
-
-		cout << "Alterar o numero minimo de horas de descanso entre turnos? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newMinRestTime;
-			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
-			cin >> newMinRestTime;
-			semprarrolar.getDriversVector().at(posDriver).setMinRestTime(newMinRestTime);
-		}
-	}
-}
-
-// remover condutor
-void removeDriver(int posDriver, Company &semprarrolar)
-{
-	semprarrolar.getDriversVector().erase(semprarrolar.getDriversVector().begin() + posDriver);
-	semprarrolar.driversBubblesort();
-}
-
-// ---------------- LINHAS --------------------
-void changeLine(unsigned int lineId, Company &semprarrolar)
-{
-	int posLine = semprarrolar.procuraIdVetorLinhas(lineId);
-
-	if (posLine == -1)
-		cout << "Linha inexistente" << endl;
-	else
-	{
-		// char para escolha de opcoes
-		char option;
-
-		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newId;
-			cout << "Insira o novo ID: ";
-			cin >> newId;
-			semprarrolar.getLinesVector().at(posLine).setId(newId);
-		}
-
-		cout << "Alterar frequencia? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			unsigned int newFreq;
-			cout << "Insira a nova frequencia: ";
-			cin >> newFreq;
-			semprarrolar.getLinesVector().at(posLine).setFreqBus(newFreq);
-		}
-
-		// ignorar newline para introduzir strings
-		cin.ignore();
-
-		cout << "Alterar paragens? (S para \"sim\", N para \"nao\") ";
-		cin >> option;
-		if (option == 'y' || option == 'Y')
-		{
-			// introducao de paragens
-			vector<string> newBusStopList;
-			int numParagem = 1;
-			string paragem;
-			cout << "(Escrever FIM para terminar)" << endl;
-
-			cout << "Paragem" << numParagem << ": ";
-			getline(cin, paragem);
-			while (paragem != "FIM")
-			{
-				newBusStopList.push_back(paragem);
-				numParagem++;
-				cout << "Paragem" << numParagem << ": ";
-				getline(cin, paragem);
-			}
-
-			// introducao dos tempos
-			vector<int> newTimesList;
-			int nParagem = 1, nIntervalosTempo = newBusStopList.size() - 1;
-			string intervaloTempo;
-			if (newBusStopList.size() > 1) // se nParagens > 1
-			{
-				cout << "(Escrever FIM para terminar)" << endl;
-				while (nParagem <= nIntervalosTempo)
-				{
-					cout << "Tempo de viagem paragens " << nParagem << " e "
-						<< nParagem + 1 << ": ";
-					getline(cin, intervaloTempo);
-					newTimesList.push_back(stoi(intervaloTempo));
-					nParagem++;
-				}
-			}
-			semprarrolar.getLinesVector().at(posLine).setBusStopList(newBusStopList);
-			semprarrolar.getLinesVector().at(posLine).setTimesList(newTimesList);
-		}
-	}
-}
-
-void removeLine(unsigned int posLine, Company &semprarrolar)
-{
-	semprarrolar.getLinesVector().erase(semprarrolar.getLinesVector().begin() + posLine);
-	semprarrolar.linesBubblesort();
-}
-
+// --- horários de linha e paragem ---
 void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar)
 {
 	const int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
@@ -1036,7 +954,7 @@ void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company s
 	}
 }
 
-// --- efetuar gravação das alterações nos ficheiros
+// --- efetuar gravação das alterações nos ficheiros ---
 void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar)
 {
 	cout << endl;
@@ -1060,7 +978,7 @@ void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrol
 		ofstream ficheiroSaida(fileDrivers);
 		for (size_t i = 0; i < semprarrolar.getDriversVector().size(); i++)
 		{
-			ficheiroSaida << semprarrolar.getDriversVector().at(i).getId() << " ; " << 
+			ficheiroSaida << semprarrolar.getDriversVector().at(i).getId() << " ; " <<
 				semprarrolar.getDriversVector().at(i).getName() << " ; " <<
 				semprarrolar.getDriversVector().at(i).getShiftMaxDuration() << " ; " <<
 				semprarrolar.getDriversVector().at(i).getMaxWeekWorkingTime() << " ; " <<

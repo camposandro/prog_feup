@@ -72,7 +72,7 @@ void Line::setBusStopList(vector<string> busStopList)
 	this->busStopList = busStopList;
 }
 
-void Line::setTimesList(vector<int> timeList)
+void Line::setTimesList(vector<int> timesList)
 {
 	this->timesList = timesList;
 }

@@ -11,15 +11,8 @@
 Company::Company(string name, string fileDrivers, string fileLines)
 {
 	this->name = name;
-	vectorDrivers = obterCondutores(fileDrivers);
-	vectorLines = obterLinhas(fileLines);
-}
-
-// cria condutor
-void Company::addDriver(Driver newDriver)
-{
-	vectorDrivers.push_back(newDriver);
-	driversBubblesort();
+	vectorDrivers = obterCondutoresFicheiro(fileDrivers);
+	vectorLines = obterLinhasFicheiro(fileLines);
 }
 
 // cria linha
@@ -29,124 +22,255 @@ void Company::addLine(Line newLine)
 	linesBubblesort();
 }
 
-// pesquisa por paragem
-void Company::pesquisaParagem()
+// modifica linha
+void Company::changeLine(unsigned int lineId)
 {
-	string nomeParagem;
-	obterNomeParagem(nomeParagem);
-	// vetor que contem os ids das linhas que contiverem a paragem
-	vector<int> idLinhasParagem = procuraNomeVetorLinhas(nomeParagem);
+	int posLine = procuraIdVetorLinhas(lineId);
 
-	if (idLinhasParagem.size() == 0)
-		cout << "Nao foi encontrada nenhuma paragem com o nome dado ...\n";
+	if (posLine == -1)
+		cout << "Linha inexistente" << endl;
 	else
 	{
-		cout << endl << "ID's das linhas que contem a paragem \"" << nomeParagem << "\": ";
-		for (size_t k = 0; k < idLinhasParagem.size(); k++)
+		// char para escolha de opcoes
+		char option;
+
+		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
 		{
-			if (k == idLinhasParagem.size() - 1)
-				cout << vectorLines.at(idLinhasParagem.at(k)).getId() << endl;
-			else cout << vectorLines.at(idLinhasParagem.at(k)).getId() << ", ";
+			unsigned int newId;
+			int newPosLine;
+			do
+			{
+				cout << "Insira o novo ID: ";
+				cin >> newId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "Insira o novo ID: ";
+					cin >> newId;
+				}
+
+				newPosLine = procuraIdVetorLinhas(newId);
+
+				if (newPosLine != -1) cout << "O ID de linha introduzido ja existe!" << endl;
+
+			} while (newPosLine != -1);
+
+			vectorLines.at(posLine).setId(newId);
 		}
+
+		cout << "Alterar frequencia? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			unsigned int newFreq;
+			cout << "Insira a nova frequencia: ";
+			cin >> newFreq;
+			vectorLines.at(posLine).setFreqBus(newFreq);
+		}
+
+		cout << "Alterar paragens? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			// ignorar newline para introduzir strings
+			cin.ignore();
+
+			// introducao de paragens
+			vector<string> newBusStopList;
+			int numParagem = 1;
+			string paragem;
+			cout << "(Escrever FIM para terminar)" << endl;
+
+			cout << "Paragem" << numParagem << ": ";
+			getline(cin, paragem);
+			while (paragem != "FIM")
+			{
+				newBusStopList.push_back(paragem);
+				numParagem++;
+				cout << "Paragem" << numParagem << ": ";
+				getline(cin, paragem);
+			}
+
+			// introducao dos tempos
+			vector<int> newTimesList;
+			int nParagem = 1, nIntervalosTempo = newBusStopList.size() - 1;
+			string intervaloTempo;
+			if (newBusStopList.size() > 1) // se nParagens > 1
+			{
+				cout << "(Escrever FIM para terminar)" << endl;
+				while (nParagem <= nIntervalosTempo)
+				{
+					cout << "Tempo de viagem paragens " << nParagem << " e "
+						<< nParagem + 1 << ": ";
+					getline(cin, intervaloTempo);
+					newTimesList.push_back(stoi(intervaloTempo));
+					nParagem++;
+				}
+			}
+			vectorLines.at(posLine).setBusStopList(newBusStopList);
+			vectorLines.at(posLine).setTimesList(newTimesList);
+		}
+		else if (option == 'N' || option == 'n')
+		{
+			cout << "Alterar tempos de viagem? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			if (option == 's' || option == 'S')
+			{
+				// ignorar newline para introduzir tempos
+				cin.ignore();
+
+				// introducao dos tempos
+				vector<int> newTimesList;
+				int nParagem = 1, nIntervalosTempo = vectorLines.at(posLine).getBusStops().size() - 1;
+				string intervaloTempo;
+
+				if (nIntervalosTempo > 1) // se nParagens > 1
+				{
+					cout << "(Escrever FIM para terminar)" << endl;
+					while (nParagem <= nIntervalosTempo)
+					{
+						cout << "Tempo de viagem paragens " << nParagem << " e "
+							<< nParagem + 1 << ": ";
+						getline(cin, intervaloTempo);
+						newTimesList.push_back(stoi(intervaloTempo));
+						nParagem++;
+					}
+				}
+				vectorLines.at(posLine).setTimesList(newTimesList);
+			}
+		}
+		linesBubblesort();
+	}
+}
+
+// remove linha
+void Company::removeLine(unsigned int posLine)
+{
+	vectorLines.erase(vectorLines.begin() + posLine);
+	linesBubblesort();
+}
+
+// cria condutor
+void Company::addDriver(Driver newDriver)
+{
+	vectorDrivers.push_back(newDriver);
+	driversBubblesort();
+}
+
+// modifica condutor
+void Company::changeDriver(unsigned int driverId)
+{
+	int posDriver = procuraIdVetorCondutores(driverId);
+
+	if (posDriver == -1)
+		cout << "Condutor inexistente" << endl;
+	else
+	{
+		// char para escolha de opcoes
+		char option;
+
+		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			unsigned int newId;
+			cout << "Insira o novo ID: ";
+			cin >> newId;
+			vectorDrivers.at(posDriver).setId(newId);
+		}
+
+		cout << "Alterar nome? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			string newName;
+			cout << "Insira o novo nome: ";
+			cin >> newName;
+			vectorDrivers.at(posDriver).setName(newName);
+		}
+
+		cout << "Alterar o numero de horas consecutivas de turno diario? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			unsigned int newMaxHours;
+			cout << "Insira o novo numero de horas consecutivas de turno diario: ";
+			cin >> newMaxHours;
+			vectorDrivers.at(posDriver).setMaxHours(newMaxHours);
+		}
+
+		cout << "Alterar o numero maximo de horas de trabalho por semana? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			unsigned int newMaxWeekHours;
+			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
+			cin >> newMaxWeekHours;
+			vectorDrivers.at(posDriver).setMaxWeekWorkingTime(newMaxWeekHours);
+		}
+
+		cout << "Alterar o numero minimo de horas de descanso entre turnos? (S para \"sim\", N para \"nao\") ";
+		cin >> option;
+		if (option == 's' || option == 'S')
+		{
+			unsigned int newMinRestTime;
+			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
+			cin >> newMinRestTime;
+			vectorDrivers.at(posDriver).setMinRestTime(newMinRestTime);
+		}
+		driversBubblesort();
+	}
+}
+
+// remove condutor
+void Company::removeDriver(int posDriver)
+{
+	vectorDrivers.erase(vectorDrivers.begin() + posDriver);
+	driversBubblesort();
+}
+
+// pesquisa por paragem
+void Company::pesquisaParagem(string nomeParagem, vector<int> idLinhasComParagem)
+{
+	cout << endl << "ID's das linhas que contem a paragem \"" << nomeParagem << "\": ";
+	for (size_t k = 0; k < idLinhasComParagem.size(); k++)
+	{
+		if (k == idLinhasComParagem.size() - 1)
+			cout << vectorLines.at(idLinhasComParagem.at(k)).getId() << endl;
+		else cout << vectorLines.at(idLinhasComParagem.at(k)).getId() << ", ";
 	}
 }
 
 // percurso entre paragens
-void Company::percursoEntreParagens()
+void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1, unsigned int posParagem2)
 {
-	cout << endl;
-	cin.ignore(); // para limpar o buffer do char anterior
-
-	string nomeParagem1, nomeParagem2;
-	cout << "Introduza o nome da paragem de partida: ";
-	getline(cin, nomeParagem1);
-
-	cout << "Introduza o nome da paragem de destino: ";
-	getline(cin, nomeParagem2);
-
-	// verificar se pertencem a mesma linha
-
-	// vetor que contem as pos das linhas que contiverem a paragem1 e paragem2
-	vector<int> LinhasParagem1 = procuraNomeVetorLinhas(nomeParagem1);
-	vector<int> LinhasParagem2 = procuraNomeVetorLinhas(nomeParagem2);
-
-	// verificar se existem linhas em comum e caso existam, guardar num vetor LinhasComum
-	vector<int> LinhasComum;
-	for (size_t i = 0; i < LinhasParagem1.size(); i++)
+	cout << "PERCURSO " << "NA LINHA " << linhaEmComum.getId() << ":" << endl;
+	// caso se introduza no sentido original
+	if (posParagem2 < posParagem1)
 	{
-		for (size_t j = 0; j < LinhasParagem2.size(); j++)
+		for (size_t k = posParagem1; k > posParagem2; k--)
 		{
-			if (LinhasParagem1.at(i) == LinhasParagem2.at(j))
-				LinhasComum.push_back(LinhasParagem1.at(i));
+			// imprime os trajetos entre as paragens entre "-->"
+			cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
+				<< right << setw(linhaEmComum.getBusStops().at(k - 1).length() + 1) << linhaEmComum.getBusStops().at(k - 1);
+			// imprime os tempos de cada trajeto 
+			cout << " " << linhaEmComum.getTimings().at(k - 1) << "min" << endl;
 		}
 	}
-
-	if (LinhasComum.size() == 0)
-		cout << endl << "Nao existem linhas constituidas por ambas as paragens!\n";
-	else
+	// caso se introduza no sentido inverso
+	else if (posParagem2 > posParagem1)
 	{
-		// coloca o nomeParagem1 a minuscula
-		string nomeParagem1Minuscula = nomeParagem1;
-		for (size_t k = 0; k <= nomeParagem1.length(); k++)
-			nomeParagem1Minuscula[k] = tolower(nomeParagem1[k]);
-
-		// coloca o nomeParagem2 a minuscula
-		string nomeParagem2Minuscula = nomeParagem2;
-		for (size_t k = 0; k <= nomeParagem2.length(); k++)
-			nomeParagem2Minuscula[k] = tolower(nomeParagem2[k]);
-
-
-		// percorre vetor de posicoes das linhas que contêm ambas as paragens
-		for (size_t i = 0; i < LinhasComum.size(); i++)
+		for (size_t k = posParagem1; k < posParagem2; k++)
 		{
-			Line linhaEmComum = vectorLines.at(LinhasComum.at(i));
-
-			// encontrar posicoes respetivas na linha
-			int posParagem1, posParagem2;
-			for (size_t j = 0; j < linhaEmComum.getBusStops().size(); j++)
-			{
-				// colocar cada elemento procurado no vetor em minuscula
-				string paragemVetor = linhaEmComum.getBusStops().at(j);
-				for (int p = 0; p < paragemVetor.length(); p++)
-					paragemVetor[p] = tolower(linhaEmComum.getBusStops().at(j).at(p));
-
-				if (paragemVetor == nomeParagem1Minuscula)
-					posParagem1 = j;
-				if (paragemVetor == nomeParagem2Minuscula)
-					posParagem2 = j;
-			}
-
-			cout << endl;
-			if (posParagem1 == posParagem2)
-				cout << "Introduza diferentes paragens!\n";
-			else
-			{
-				cout << "PERCURSO " << "NA LINHA " << linhaEmComum.getId() << ":" << endl;
-				// caso se introduza no sentido original
-				if (posParagem2 < posParagem1)
-				{
-					for (size_t k = posParagem1; k > posParagem2; k--)
-					{
-						// imprime os trajetos entre as paragens entre "-->"
-						cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
-							<< right << setw(linhaEmComum.getBusStops().at(k - 1).length() + 1) << linhaEmComum.getBusStops().at(k - 1);
-						// imprime os tempos de cada trajeto 
-						cout << " " << linhaEmComum.getTimings().at(k - 1) << "min" << endl;
-					}
-				}
-				// caso se introduza no sentido inverso
-				else if (posParagem2 > posParagem1)
-				{
-					for (size_t k = posParagem1; k < posParagem2; k++)
-					{
-						// imprime os trajetos entre as paragens entre "-->"
-						cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
-							<< right << setw(linhaEmComum.getBusStops().at(k + 1).length() + 1) << linhaEmComum.getBusStops().at(k + 1);
-						// imprime os tempos de cada trajeto 
-						cout << " " << linhaEmComum.getTimings().at(k) << "min" << endl;
-					}
-				}
-			}
+			// imprime os trajetos entre as paragens entre "-->"
+			cout << left << setw(linhaEmComum.getBusStops().at(k).length() + 1) << linhaEmComum.getBusStops().at(k) << "-->"
+				<< right << setw(linhaEmComum.getBusStops().at(k + 1).length() + 1) << linhaEmComum.getBusStops().at(k + 1);
+			// imprime os tempos de cada trajeto 
+			cout << " " << linhaEmComum.getTimings().at(k) << "min" << endl;
 		}
 	}
 }
@@ -226,7 +350,7 @@ void Company::setName(string name)
 	this->name = name;
 }
 
-vector<Line> Company::obterLinhas(string fileLines)
+vector<Line> Company::obterLinhasFicheiro(string fileLines)
 {
 	// EXTRACT EACH LINE'S INFO
 	string LinhaI;
@@ -243,7 +367,7 @@ vector<Line> Company::obterLinhas(string fileLines)
 	return vectorLines;
 }
 
-vector<Driver> Company::obterCondutores(string fileDrivers)
+vector<Driver> Company::obterCondutoresFicheiro(string fileDrivers)
 {
 	// EXTRACT EACH DRIVER'S INFO
 	string CondutorI;
@@ -263,13 +387,6 @@ vector<Driver> Company::obterCondutores(string fileDrivers)
 ////////////////////////////
 // outros metodos
 ///////////////////////////
-void Company::obterNomeParagem(string &nomeParagem)
-{
-	cin.ignore();
-	cout << "Introduza o nome da paragem a pesquisar: ";
-	getline(cin, nomeParagem);
-}
-
 void Company::serviceDistribution()
 {
 }
