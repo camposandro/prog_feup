@@ -28,7 +28,6 @@ char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
 void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar);
 void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company semprarrolar);
-void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -55,7 +54,7 @@ int main()
 	opcoesPrincipal(semprarrolar);
 
 	// save changes
-	atualizaFicheiros(inCondutores, inLinhas, semprarrolar);
+	semprarrolar.atualizaFicheiros(inCondutores, inLinhas);
 	cout << endl << "Programa a encerrar ..." << endl << endl;
 
 	return 0;
@@ -951,73 +950,5 @@ void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company s
 		}
 
 		cout << endl;
-	}
-}
-
-// --- efetuar gravação das alterações nos ficheiros ---
-void atualizaFicheiros(string fileDrivers, string fileLines, Company &semprarrolar)
-{
-	cout << endl;
-
-	char escolha;
-	cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
-	cin >> escolha;
-
-	while (cin.fail() || escolha != 'S' && escolha != 'N')
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma opcao valida!\n";
-		cout << "Deseja atualizar o ficheiro de condutores ? (S para \"sim\", N para \"nao\"): ";
-		cin >> escolha;
-	}
-
-	if (escolha == 'S')
-	{
-		// escrever no ficheiro (opcional)
-		ofstream ficheiroSaida(fileDrivers);
-		for (size_t i = 0; i < semprarrolar.getDriversVector().size(); i++)
-		{
-			ficheiroSaida << semprarrolar.getDriversVector().at(i).getId() << " ; " <<
-				semprarrolar.getDriversVector().at(i).getName() << " ; " <<
-				semprarrolar.getDriversVector().at(i).getShiftMaxDuration() << " ; " <<
-				semprarrolar.getDriversVector().at(i).getMaxWeekWorkingTime() << " ; " <<
-				semprarrolar.getDriversVector().at(i).getMinRestTime() << endl;
-		}
-	}
-
-	cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
-	cin >> escolha;
-
-	while (cin.fail() || escolha != 'S' && escolha != 'N')
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Introduza uma opcao valida!\n";
-		cout << "Deseja atualizar o ficheiro de linhas ? (S para \"sim\", N para \"nao\"): ";
-		cin >> escolha;
-	}
-
-	if (escolha == 'S')
-	{
-		// escrever no ficheiro (opcional)
-		ofstream ficheiroSaida(fileLines);
-		for (size_t i = 0; i < semprarrolar.getLinesVector().size(); i++)
-		{
-			ficheiroSaida << semprarrolar.getLinesVector().at(i).getId() <<
-				" ; " << semprarrolar.getLinesVector().at(i).getFreqBus() << " ; ";
-			for (size_t j = 0; j < semprarrolar.getLinesVector().at(i).getBusStops().size(); j++)
-			{
-				if (j == semprarrolar.getLinesVector().at(i).getBusStops().size() - 1)
-					ficheiroSaida << semprarrolar.getLinesVector().at(i).getBusStops().at(j) << "; ";
-				else ficheiroSaida << semprarrolar.getLinesVector().at(i).getBusStops().at(j) << ", ";
-			}
-			for (size_t k = 0; k < semprarrolar.getLinesVector().at(i).getTimings().size(); k++)
-			{
-				if (k == semprarrolar.getLinesVector().at(i).getTimings().size() - 1)
-					ficheiroSaida << semprarrolar.getLinesVector().at(i).getTimings().at(k) << endl;
-				else ficheiroSaida << semprarrolar.getLinesVector().at(i).getTimings().at(k) << ", ";
-			}
-		}
 	}
 }

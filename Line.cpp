@@ -53,7 +53,6 @@ Line::Line(string textLine)
 	}
 }
 
-
 ////////////////
 // set methods
 ////////////////
