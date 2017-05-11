@@ -252,6 +252,7 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 	// caso se introduza no sentido original
 	if (posParagem2 < posParagem1)
 	{
+		unsigned int tempoFinal = 0;
 		for (size_t k = posParagem1; k > posParagem2; k--)
 		{
 			// imprime os trajetos entre as paragens entre "-->"
@@ -259,11 +260,19 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 				<< right << setw(linhaEmComum.getBusStops().at(k - 1).length() + 1) << linhaEmComum.getBusStops().at(k - 1);
 			// imprime os tempos de cada trajeto 
 			cout << " " << linhaEmComum.getTimings().at(k - 1) << "min" << endl;
+			tempoFinal += linhaEmComum.getTimings().at(k - 1);
 		}
+		if (tempoFinal > 60)
+		{
+			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
+			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+		}
+		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
 	}
 	// caso se introduza no sentido inverso
 	else if (posParagem2 > posParagem1)
 	{
+		unsigned int tempoFinal = 0;
 		for (size_t k = posParagem1; k < posParagem2; k++)
 		{
 			// imprime os trajetos entre as paragens entre "-->"
@@ -271,7 +280,14 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 				<< right << setw(linhaEmComum.getBusStops().at(k + 1).length() + 1) << linhaEmComum.getBusStops().at(k + 1);
 			// imprime os tempos de cada trajeto 
 			cout << " " << linhaEmComum.getTimings().at(k) << "min" << endl;
+			tempoFinal += linhaEmComum.getTimings().at(k);
 		}
+		if (tempoFinal > 60)
+		{
+			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
+			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+		}
+		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
 	}
 }
 

@@ -654,31 +654,49 @@ void opcoesPercursos(Company semprarrolar)
 		{
 			cin.ignore(); // para limpar o buffer do char anterior
 
-			string nomeParagem1, nomeParagem2;
+			string nomeParagem1;
 			cout << "Introduza o nome da paragem de partida: ";
 			getline(cin, nomeParagem1);
+			vector<int> linhasParagem1 = semprarrolar.procuraNomeVetorLinhas(nomeParagem1);
+			while (linhasParagem1.size() == 0)
+			{
+				cout << "A paragem " << nomeParagem1 << " nao existe." << endl;
+				cout << "Introduza o nome da paragem de partida: ";
+				getline(cin, nomeParagem1);
+				linhasParagem1 = semprarrolar.procuraNomeVetorLinhas(nomeParagem1);
+			}
 
+			string nomeParagem2;
 			cout << "Introduza o nome da paragem de destino: ";
 			getline(cin, nomeParagem2);
+			vector<int> linhasParagem2 = semprarrolar.procuraNomeVetorLinhas(nomeParagem2);
+			while (linhasParagem2.size() == 0)
+			{
+				cout << "A paragem " << nomeParagem2 << " nao existe." << endl;
+				cout << "Introduza o nome da paragem de destino: ";
+				getline(cin, nomeParagem2);
+				linhasParagem2 = semprarrolar.procuraNomeVetorLinhas(nomeParagem2);
+			}
 
 			// verificar se pertencem a mesma linha
-			// vetor que contem as pos das linhas que contiverem a paragem1 e paragem2
-			vector<int> LinhasParagem1 = semprarrolar.procuraNomeVetorLinhas(nomeParagem1);
-			vector<int> LinhasParagem2 = semprarrolar.procuraNomeVetorLinhas(nomeParagem2);
 
 			// verificar se existem linhas em comum e caso existam, guardar num vetor LinhasComum
-			vector<int> LinhasComum;
-			for (size_t i = 0; i < LinhasParagem1.size(); i++)
+			vector<int> linhasComum;
+			for (size_t i = 0; i < linhasParagem1.size(); i++)
 			{
-				for (size_t j = 0; j < LinhasParagem2.size(); j++)
+				for (size_t j = 0; j < linhasParagem2.size(); j++)
 				{
-					if (LinhasParagem1.at(i) == LinhasParagem2.at(j))
-						LinhasComum.push_back(LinhasParagem1.at(i));
+					if (linhasParagem1.at(i) == linhasParagem2.at(j))
+						linhasComum.push_back(linhasParagem1.at(i));
 				}
 			}
 
-			if (LinhasComum.size() == 0)
-				cout << endl << "Nao existem linhas constituidas por ambas as paragens!\n";
+			if (linhasComum.size() == 0) // nao existem linhas constituidas por ambas as paragens
+			{
+				// verificar se existem paragens em comum entre as 2 linhas
+				cout << "nao existem linhas";
+
+			}
 			else
 			{
 				// coloca o nomeParagem1 a minuscula
@@ -692,9 +710,9 @@ void opcoesPercursos(Company semprarrolar)
 					nomeParagem2Minuscula[k] = tolower(nomeParagem2[k]);
 
 				// percorre vetor de posicoes das linhas que contêm ambas as paragens
-				for (size_t i = 0; i < LinhasComum.size(); i++)
+				for (size_t i = 0; i < linhasComum.size(); i++)
 				{
-					Line linhaEmComum = semprarrolar.getLinesVector().at(LinhasComum.at(i));
+					Line linhaEmComum = semprarrolar.getLinesVector().at(linhasComum.at(i));
 
 					// encontrar posicoes respetivas na linha
 					int posParagem1, posParagem2;

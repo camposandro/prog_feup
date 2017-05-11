@@ -49,5 +49,5 @@ void Bus::setLineId(unsigned int lineId)
 }
 
 ////////////////////////////
-// outher methods
+// other methods
 ///////////////////////////
