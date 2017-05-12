@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Shift.h"
+#include "Company.h"
 
 using namespace std;
 

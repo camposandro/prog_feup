@@ -42,7 +42,8 @@ class Company
   void driversBubblesort();
   void linesBubblesort();
   void atualizaFicheiros(string fileDrivers, string fileLines);
-  void serviceDistribution(); // funcao que implementa a afectacao de servico
+  unsigned int numBusesNeededLine(unsigned int posLine);
+  //void serviceDistribution(); // funcao que implementa a afectacao de servico
   // funções auxiliares
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);
   unsigned int procuraIdVetorLinhas(unsigned int idLinha);

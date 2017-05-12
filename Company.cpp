@@ -1,10 +1,12 @@
 #include <iostream>
+#include <list>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <conio.h>
 
+#include "Bus.h"
 #include "Company.h"
 
 // construtor da classe
@@ -403,9 +405,41 @@ vector<Driver> Company::obterCondutoresFicheiro(string fileDrivers)
 ////////////////////////////
 // outros metodos
 ///////////////////////////
+unsigned int Company::numBusesNeededLine(unsigned int posLine)
+{
+	// tempo de ida e volta numa viagem da linha
+	unsigned int tempo_ida_e_volta = 0;
+	vector<int> vetorTempos = vectorLines.at(posLine).getTimings();
+	for (size_t j = 0; j < vetorTempos.size(); j++)
+		tempo_ida_e_volta += vetorTempos.at(j);
+
+	// freq. dos autocarros na linha
+	unsigned int freqBusLinha = vectorLines.at(posLine).getFreqBus();
+
+	// numero de autocarros necessarios para o percurso
+	unsigned int numberBusesLine = (int)((double)tempo_ida_e_volta / freqBusLinha + 1.0);
+
+	cout << numberBusesLine;
+
+	return numberBusesLine;
+}
+
+/*
 void Company::serviceDistribution()
 {
+	list<map<Bus, Shift>> listShifts;
+
+	for (size_t i = 0; i < vectorLines.size(); i++)
+	{
+		unsigned int numBuses = numBusesNeededLine(i);
+		for (size_t j = 0; j < numBuses; j++)
+		{
+			
+
+		}
+	}
 }
+*/
 
 // --- efetuar gravação das alterações nos ficheiros ---
 void Company::atualizaFicheiros(string fileDrivers, string fileLines)

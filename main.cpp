@@ -28,6 +28,8 @@ char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
 void horarioLinha(unsigned int lineId, unsigned int posLine, Company &semprarrolar);
 void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company semprarrolar);
+void opcoesAutocarros(Company semprarrolar);
+void opcoesEscalonamento(Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -139,6 +141,8 @@ unsigned int menuPrincipal()
 		<< "3. Visualizar percursos\n"
 		<< "4. Visualizar linhas\n"
 		<< "5. Visualizar condutores\n"
+		<< "6. Visualizar informacoes de autocarros\n"
+		<< "7. Visualizar escalonamento de condutores\n"
 		<< "0. Sair\n";
 	cout << endl;
 
@@ -146,7 +150,7 @@ unsigned int menuPrincipal()
 	cout << "--> opcao ";
 	cin >> choice;
 
-	while (choice > 5 || choice < 0)
+	while (choice > 7 || choice < 0)
 	{
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
@@ -180,6 +184,12 @@ void opcoesPrincipal(Company &semprarrolar)
 			break;
 		case 5:
 			semprarrolar.visualizaCondutores();
+			break;
+		case 6:
+			opcoesAutocarros(semprarrolar);
+			break;
+		case 7:
+			opcoesEscalonamento(semprarrolar);
 			break;
 		default:
 			cout << "Introduza uma opcao valida!\n";
@@ -680,7 +690,7 @@ void opcoesPercursos(Company semprarrolar)
 
 			// verificar se pertencem a mesma linha
 
-			// verificar se existem linhas em comum e caso existam, guardar num vetor LinhasComum
+			// verificar se existem linhas em comum e caso existam, guardar num vetor linhasComum
 			vector<int> linhasComum;
 			for (size_t i = 0; i < linhasParagem1.size(); i++)
 			{
@@ -693,8 +703,7 @@ void opcoesPercursos(Company semprarrolar)
 
 			if (linhasComum.size() == 0) // nao existem linhas constituidas por ambas as paragens
 			{
-				// verificar se existem paragens em comum entre as 2 linhas
-				cout << "nao existem linhas";
+				
 
 			}
 			else
@@ -745,7 +754,7 @@ void opcoesPercursos(Company semprarrolar)
 			vector<int> linhasComAParagem;
 			do
 			{
-				cout << endl << "Nome da paragem a mostrar: ";
+				cout << "Nome da paragem a mostrar: ";
 				getline(cin, nomeParagem);
 
 				while (cin.fail())
@@ -771,6 +780,46 @@ void opcoesPercursos(Company semprarrolar)
 			return;
 		}
 	}
+}
+
+char menuOpcoesAutocarros()
+{
+	cout << endl;
+	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
+	cout << "# MENU ANTERIOR\n\n";
+
+	char choice;
+	cout << "--> opcao ";
+	cin >> choice;
+
+	while (choice != '#')
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma opcao valida!\n";
+		cout << "--> opcao ";
+		cin >> choice;
+	}
+
+	return choice;
+}
+
+void opcoesAutocarros(Company semprarrolar)
+{
+	char choice;
+	while (choice = menuOpcoesAutocarros())
+	{
+		switch (choice)
+		{
+		case '#':
+			return;
+		}
+	}
+}
+
+void opcoesEscalonamento(Company &semprarrolar)
+{
+	// ....
 }
 
 // --- horários de linha e paragem ---
@@ -967,6 +1016,7 @@ void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, Company s
 			if (hora == horaFinalParagem && min == minFinalParagem) break;
 		}
 
-		cout << endl;
+		if (j != linhasComAParagem.size() - 1) cout << endl << endl;
+		else cout << endl;
 	}
 }

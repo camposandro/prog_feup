@@ -1,9 +1,10 @@
 #include "Bus.h"
+#include "Company.h"
 
 Bus::Bus(unsigned int id, unsigned int driver, unsigned int line)
 {
 	this->orderInLine = id;
-	this->driverId = driverId;
+	this->driverId = driver;
 	this->lineId = line;
 }
 
@@ -51,3 +52,4 @@ void Bus::setLineId(unsigned int lineId)
 ////////////////////////////
 // other methods
 ///////////////////////////
+
