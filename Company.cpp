@@ -38,7 +38,15 @@ void Company::changeLine(unsigned int lineId)
 
 		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newId;
 			int newPosLine;
@@ -66,7 +74,15 @@ void Company::changeLine(unsigned int lineId)
 
 		cout << "Alterar frequencia? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar frequencia? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newFreq;
 			cout << "Insira a nova frequencia: ";
@@ -76,7 +92,15 @@ void Company::changeLine(unsigned int lineId)
 
 		cout << "Alterar paragens? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar paragens? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			// ignorar newline para introduzir strings
 			cin.ignore();
@@ -116,11 +140,19 @@ void Company::changeLine(unsigned int lineId)
 			vectorLines.at(posLine).setBusStopList(newBusStopList);
 			vectorLines.at(posLine).setTimesList(newTimesList);
 		}
-		else if (option == 'N' || option == 'n')
+		else if (option == 'n')
 		{
 			cout << "Alterar tempos de viagem? (S para \"sim\", N para \"nao\") ";
 			cin >> option;
-			if (option == 's' || option == 'S')
+			option = tolower(option);
+			while (option != 's' && option != 'n')
+			{
+				cout << "Insira uma opcao valida!\n";
+				cout << "Alterar tempos de viagem? (S para \"sim\", N para \"nao\") ";
+				cin >> option;
+				option = tolower(option);
+			}
+			if (option == 's')
 			{
 				// ignorar newline para introduzir tempos
 				cin.ignore();
@@ -177,7 +209,15 @@ void Company::changeDriver(unsigned int driverId)
 
 		cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar ID? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newId;
 			cout << "Insira o novo ID: ";
@@ -187,7 +227,15 @@ void Company::changeDriver(unsigned int driverId)
 
 		cout << "Alterar nome? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar nome? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			string newName;
 			cout << "Insira o novo nome: ";
@@ -197,7 +245,15 @@ void Company::changeDriver(unsigned int driverId)
 
 		cout << "Alterar o numero de horas consecutivas de turno diario? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar o numero de horas consecutivas de turno diario? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newMaxHours;
 			cout << "Insira o novo numero de horas consecutivas de turno diario: ";
@@ -207,7 +263,15 @@ void Company::changeDriver(unsigned int driverId)
 
 		cout << "Alterar o numero maximo de horas de trabalho por semana? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar o numero maximo de horas de trabalho por semana? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newMaxWeekHours;
 			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
@@ -217,7 +281,15 @@ void Company::changeDriver(unsigned int driverId)
 
 		cout << "Alterar o numero minimo de horas de descanso entre turnos? (S para \"sim\", N para \"nao\") ";
 		cin >> option;
-		if (option == 's' || option == 'S')
+		option = tolower(option);
+		while (option != 's' && option != 'n')
+		{
+			cout << "Insira uma opcao valida!\n";
+			cout << "Alterar o numero minimo de horas de descanso entre turnos? (S para \"sim\", N para \"nao\") ";
+			cin >> option;
+			option = tolower(option);
+		}
+		if (option == 's')
 		{
 			unsigned int newMinRestTime;
 			cout << "Insira o novo numero maximo de horas de trabalho por semana: ";
@@ -290,6 +362,204 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
 		}
 		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
+	}
+}
+
+// horário de linha
+void Company::horarioLinha(unsigned int lineId, unsigned int posLine, unsigned int horaInicio, unsigned int horaFim)
+{
+	const int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+	Line LinhaMostrar = vectorLines.at(posLine);
+
+	cout << endl << "Linha " << lineId << endl;
+	// impressao dos nomes das paragens na primeira linha
+	for (size_t i = 0; i < LinhaMostrar.getBusStops().size(); i++)
+	{
+		// tamanho do nome da paragem
+		int tamanhoNomeParagem = LinhaMostrar.getBusStops().at(i).length();
+
+		if (i == LinhaMostrar.getBusStops().size() - 1)
+			cout << left << setw(tamanhoNomeParagem + 2) << LinhaMostrar.getBusStops().at(i) << endl;
+		else
+			cout << left << setw(tamanhoNomeParagem + 2) << LinhaMostrar.getBusStops().at(i);
+	}
+
+	// percorrem-se as linhas uma a uma para introduzir os tempos
+	int horaLin = HORA_INICIO, horaCol = HORA_INICIO, minLin = 0, minCol = 0;
+
+	// caso haja o problema de o horario ser noturno
+	int nHoras;
+	if (HORA_FIM - HORA_INICIO < 0)
+		nHoras = 24 - HORA_INICIO + HORA_FIM;
+	else nHoras = HORA_FIM - HORA_INICIO;
+
+	// numero de linhas de horario a imprimir
+	int nLinhas = (60 / LinhaMostrar.getFreqBus()) * nHoras;
+
+	for (int linhas = 0; linhas < nLinhas; linhas++)
+	{
+		for (int colunas = 0; colunas < LinhaMostrar.getBusStops().size(); colunas++)
+		{
+			int tamanhoImpressao = LinhaMostrar.getBusStops().at(colunas).length() + 2;
+
+			ostringstream streamHoras;
+			if (horaCol < 10 && minCol < 10)
+			{
+				streamHoras << setw(2) << setfill('0') << horaCol << ":" << setw(2) << setfill('0') << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else if (horaCol < 10 && minCol >= 10)
+			{
+				streamHoras << setw(2) << setfill('0') << horaCol << ":" << setw(2) << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else if (minCol < 10 && horaCol >= 10)
+			{
+				streamHoras << setw(2) << horaCol << ":" << setw(2) << setfill('0') << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+			else
+			{
+				streamHoras << setw(2) << horaCol << ":" << setw(2) << minCol;
+				string horas = streamHoras.str();
+				cout << left << setw(tamanhoImpressao) << horas;
+			}
+
+			if (colunas < LinhaMostrar.getBusStops().size() - 1)
+				minCol += LinhaMostrar.getTimings().at(colunas);
+
+			if (minCol / 60 == 1)
+			{
+				horaCol++;
+				minCol = minCol % 60;
+			}
+
+			if (horaCol == 24)
+				horaCol = 0;
+
+			if (colunas == LinhaMostrar.getTimings().size()) cout << endl;
+		}
+
+		minLin += LinhaMostrar.getFreqBus();
+
+		if (minLin / 60 == 1)
+		{
+			horaLin++;
+			minLin = minLin % 60;
+		}
+
+		if (horaLin == 24)
+			horaLin = 0;
+
+		horaCol = horaLin;
+		minCol = minLin;
+
+	}
+}
+
+// horario de paragem
+void Company::horarioParagem(string nomeParagem, vector<int> linhasComAParagem, unsigned int horaInicio, unsigned int horaFim)
+{
+	const int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+	cout << endl;
+	for (size_t j = 0; j < linhasComAParagem.size(); j++)
+	{
+		Line LinhaMostrar = vectorLines.at(linhasComAParagem.at(j));
+		cout << "Linha " << LinhaMostrar.getId() << endl;
+
+		// retrieve the pos of the stop inside its own line
+		int posOfStop;
+		for (size_t k = 0; k < LinhaMostrar.getBusStops().size(); k++)
+		{
+			if (LinhaMostrar.getBusStops().at(k) == nomeParagem)
+				posOfStop = k;
+		}
+
+		// caso haja o problema de o horario ser noturno
+		int nHoras;
+		if (HORA_FIM - HORA_INICIO < 0)
+			nHoras = 24 - HORA_INICIO + HORA_FIM;
+		else nHoras = HORA_FIM - HORA_INICIO;
+
+		int nImpressoes = (((60 / LinhaMostrar.getFreqBus()) * nHoras + 1) / 6) + 1;
+		int hora = HORA_INICIO, min = 0;
+
+		// calculo dos minutos iniciais
+		for (size_t i = 1; i <= posOfStop; i++)
+			min += LinhaMostrar.getTimings().at(i - 1);
+
+		// calculo da hora final da paragem
+		int horaFinalParagem = HORA_INICIO;
+		int minFinalParagem = min + ((60 / LinhaMostrar.getFreqBus()) * nHoras + 1) * LinhaMostrar.getFreqBus();
+		if (minFinalParagem > 60)
+		{
+			horaFinalParagem += minFinalParagem / 60;
+			minFinalParagem = minFinalParagem % 60;
+		}
+		if (horaFinalParagem > 24) horaFinalParagem -= 24;
+
+		if (min / 60 == 1)
+		{
+			hora++;
+			min = min % 60;
+		}
+
+		for (int linhas = 0; linhas < nImpressoes; linhas++)
+		{
+			for (int colunas = 0; colunas < 6; colunas++)
+			{
+				int tamanhoImpressao = 7;
+
+				ostringstream streamHoras;
+				if (hora < 10 && min < 10)
+				{
+					streamHoras << setw(2) << setfill('0') << hora << ":" << setw(2) << setfill('0') << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else if (hora < 10 && min >= 10)
+				{
+					streamHoras << setw(2) << setfill('0') << hora << ":" << setw(2) << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else if (min < 10 && hora >= 10)
+				{
+					streamHoras << setw(2) << hora << ":" << setw(2) << setfill('0') << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+				else
+				{
+					streamHoras << setw(2) << hora << ":" << setw(2) << min;
+					string horas = streamHoras.str();
+					cout << left << setw(tamanhoImpressao) << horas;
+				}
+
+				min += LinhaMostrar.getFreqBus();
+
+				if (min / 60 == 1)
+				{
+					hora++;
+					min = min % 60;
+				}
+
+				if (hora == 24)
+					hora = 0;
+
+				if (hora == horaFinalParagem) break;
+				if (colunas == 5 && linhas != nImpressoes - 1) cout << endl;
+			}
+			if (hora == horaFinalParagem) break;
+		}
+
+		if (j != linhasComAParagem.size() - 1) cout << endl << endl;
+		else cout << endl;
 	}
 }
 
