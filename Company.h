@@ -50,7 +50,7 @@ class Company
   unsigned int numBusesNeededLine(unsigned int posLine);
   void createBuses(unsigned int horaInicio, unsigned int horaFim);
   void printBusInfo(unsigned int lineId, unsigned int busId);
-  void serviceDistribution(unsigned int horaInicio, unsigned int horaFim); // funcao que implementa a afectacao de servico
+  void serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int startTime, unsigned int endTime);
   // funções auxiliares
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);
   unsigned int procuraIdVetorLinhas(unsigned int idLinha);

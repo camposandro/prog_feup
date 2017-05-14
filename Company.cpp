@@ -739,11 +739,16 @@ void Company::printBusInfo(unsigned int lineId, unsigned int busId)
 	}
 }
 
-void Company::serviceDistribution(unsigned int horaInicio, unsigned int horaFim)
+void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int startTime, unsigned int endTime)
 {
-	
-
-
+	for (size_t i = 0; i < vetorBuses.size(); i++)
+	{
+		Bus bus = vetorBuses.at(i);
+		if (bus.getLineId() == lineId && bus.getBusOrderInLine() == busId)
+		{
+			
+		}
+	}
 }
 
 // --- efetuar gravação das alterações nos ficheiros ---

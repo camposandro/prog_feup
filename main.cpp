@@ -855,6 +855,7 @@ void opcoesAutocarros(Company semprarrolar)
 			}
 
 			semprarrolar.printBusInfo(lineId, busId);
+			break;
 		}
 		case '#':
 			return;
@@ -897,7 +898,87 @@ void opcoesEscalonamento(Company &semprarrolar)
 		switch (choice)
 		{
 		case 'a':
-		
+		{
+			unsigned int driverId;
+			int posDriver = -1;
+			do
+			{
+				cout << "ID do condutor: ";
+				cin >> driverId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID do condutor: ";
+					cin >> driverId;
+				}
+
+				posDriver = semprarrolar.procuraIdVetorCondutores(driverId);
+
+				if (posDriver == -1) cout << "O ID de condutor introduzido nao existe!" << endl;
+
+			} while (posDriver == -1);
+
+			unsigned int lineId;
+			int posLine = -1;
+			do
+			{
+				cout << "ID da linha: ";
+				cin >> lineId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "ID da linha: ";
+					cin >> lineId;
+				}
+
+				posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+				if (posLine == -1)
+					cout << "O ID da linha introduzido nao existe!" << endl;
+
+			} while (posLine == -1);
+
+			unsigned int maxBusId = semprarrolar.numBusesNeededLine(posLine);
+
+			unsigned int busId;
+			cout << "Insira o ID do autocarro: ";
+			cin >> busId;
+			while (cin.fail() || busId > maxBusId || busId < 1)
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "O ID de autocarro introduzido e invalido!\n";
+				cout << "Insira o ID do autocarro: ";
+				cin >> busId;
+			}
+
+			unsigned int startTime, endTime;
+			cout << "Insira a hora de inicio do turno: ";
+			cin >> startTime;
+			while (cin.fail() || startTime < 0 || startTime > 23)
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Insira a hora de inicio do turno: ";
+				cin >> startTime;
+			}
+			cout << "Insira a hora de fim do turno: ";
+			cin >> endTime;
+			while (cin.fail() || endTime < 0 || endTime > 23)
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Insira a hora de fim do turno: ";
+				cin >> endTime;
+			}
+
+			semprarrolar.serviceDistribution(driverId,lineId,busId,startTime,endTime);
+			break;
+		}
 		case 'b':
 
 		case 'c':
