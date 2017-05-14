@@ -3,10 +3,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "Line.h"
 #include "Driver.h"
+#include "Bus.h"
 
 using namespace std;
 
@@ -46,7 +46,8 @@ class Company
   void linesBubblesort();
   void atualizaFicheiros(string fileDrivers, string fileLines);
   unsigned int numBusesNeededLine(unsigned int posLine);
-  vector<vector<Bus>> createAllBuses(unsigned int horaInicioServico, unsigned int horaFimServico);
+  void createBuses();
+  void printBusInfo(unsigned int lineId, unsigned int busId);
   void serviceDistribution(unsigned int horaInicio, unsigned int horaFim); // funcao que implementa a afectacao de servico
   // funções auxiliares
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);

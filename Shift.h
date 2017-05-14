@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+#include "Shift.h"
+
 using namespace std;
 
 class Shift

@@ -8,14 +8,6 @@ Bus::Bus(unsigned int id, unsigned int driver, unsigned int line)
 	this->lineId = line;
 }
 
-Bus::Bus(unsigned int id, unsigned int driver, unsigned int line, vector<Shift> vSchedule)
-{
-	this->orderInLine = id;
-	this->driverId = driver;
-	this->lineId = line;
-	this->schedule = vSchedule;
-}
-
 ////////////////////////////////
 // get methods
 ///////////////////////////////

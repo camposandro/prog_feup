@@ -26,7 +26,7 @@ char menuOpcoesVisualizarLinha();
 void opcoesVisualizarLinha(Company semprarrolar);
 char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
-//void opcoesAutocarros(Company semprarrolar);
+void opcoesAutocarros(Company semprarrolar);
 //void opcoesEscalonamento(Company &semprarrolar);
 
 // variáveis globais
@@ -49,6 +49,9 @@ int main()
 
 	// definir horario de funcionamento
 	definirHorario();
+
+	// criacao dos autocarros para a companhia
+	semprarrolar.createBuses();
 
 	// chamar menu com companhia
 	opcoesPrincipal(semprarrolar);
@@ -139,7 +142,7 @@ unsigned int menuPrincipal()
 		<< "3. Visualizar percursos\n"
 		<< "4. Visualizar linhas\n"
 		<< "5. Visualizar condutores\n"
-		//<< "6. Visualizar informacoes de autocarros\n"
+		<< "6. Visualizar informacoes de autocarros\n"
 		//<< "7. Visualizar escalonamento de condutores\n"
 		<< "0. Sair\n";
 	cout << endl;
@@ -148,7 +151,7 @@ unsigned int menuPrincipal()
 	cout << "--> opcao ";
 	cin >> choice;
 
-	while (choice > 5 || choice < 0)
+	while (choice > 6 || choice < 0)
 	{
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
@@ -184,7 +187,7 @@ void opcoesPrincipal(Company &semprarrolar)
 			semprarrolar.visualizaCondutores();
 			break;
 		case 6:
-			//opcoesAutocarros(semprarrolar);
+			opcoesAutocarros(semprarrolar);
 			break;
 		case 7:
 			//opcoesEscalonamento(semprarrolar);
@@ -207,14 +210,15 @@ char menuGestaoLinhas()
 	char choice;
 	cout << "--> opcao ";
 	cin >> choice;
-
-	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
+	choice = tolower(choice);
+	while (choice != 'a' && choice != 'b' && choice != 'c' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
 		cin >> choice;
+		choice = tolower(choice);
 	}
 
 	return choice;
@@ -227,7 +231,7 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 	{
 		switch (choice)
 		{
-		case 'A':
+		case 'a':
 		{
 			unsigned int id, freqBus;
 			int posLine;
@@ -297,7 +301,7 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 			semprarrolar.addLine(newLine);
 			break;
 		}
-		case 'B':
+		case 'b':
 		{
 			if (semprarrolar.getLinesVector().size() == 0)
 			{
@@ -330,7 +334,7 @@ void opcoesGestaoLinhas(Company &semprarrolar)
 			semprarrolar.changeLine(lineId);
 			break;
 		}
-		case 'C':
+		case 'c':
 		{
 			if (semprarrolar.getLinesVector().size() == 0)
 			{
@@ -382,14 +386,15 @@ char menuGestaoCondutores()
 	char choice;
 	cout << "--> opcao ";
 	cin >> choice;
-
-	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
+	choice = tolower(choice);
+	while (choice != 'a' && choice != 'b' && choice != 'c' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
 		cin >> choice;
+		choice = tolower(choice);
 	}
 
 	return choice;
@@ -402,7 +407,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 	{
 		switch (choice)
 		{
-		case 'A':
+		case 'a':
 		{
 			unsigned int id, maxHours, maxWeekWorkingTime, minRestTime;
 			int posDriver;
@@ -470,7 +475,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 			semprarrolar.addDriver(newDriver);
 			break;
 		}
-		case 'B':
+		case 'b':
 		{
 			if (semprarrolar.getDriversVector().size() == 0)
 			{
@@ -502,7 +507,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 			semprarrolar.changeDriver(driverId);
 			break;
 		}
-		case 'C':
+		case 'c':
 		{
 			if (semprarrolar.getDriversVector().size() == 0)
 			{
@@ -553,14 +558,15 @@ char menuOpcoesVisualizarLinha()
 	char choice;
 	cout << "--> opcao ";
 	cin >> choice;
-
-	while (choice != 'A' && choice != 'B' && choice != '#')
+	choice = tolower(choice);
+	while (choice != 'a' && choice != 'b' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
 		cin >> choice;
+		choice = tolower(choice);
 	}
 
 	return choice;
@@ -573,10 +579,10 @@ void opcoesVisualizarLinha(Company semprarrolar)
 	{
 		switch (choice)
 		{
-		case 'A':
+		case 'a':
 			semprarrolar.visualizaLinhas();
 			break;
-		case 'B':
+		case 'b':
 		{
 			unsigned int lineId;
 			int posLine;
@@ -621,14 +627,15 @@ char menuOpcoesPercursos()
 	char choice;
 	cout << "--> opcao ";
 	cin >> choice;
-
-	while (choice != 'A' && choice != 'B' && choice != 'C' && choice != '#')
+	choice = tolower(choice);
+	while (choice != 'a' && choice != 'b' && choice != 'c' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
 		cin >> choice;
+		choice = tolower(choice);
 	}
 
 	return choice;
@@ -641,7 +648,7 @@ void opcoesPercursos(Company semprarrolar)
 	{
 		switch (choice)
 		{
-		case 'A':
+		case 'a':
 		{
 			cin.ignore();
 			string nomeParagem;
@@ -658,7 +665,7 @@ void opcoesPercursos(Company semprarrolar)
 
 			break;
 		}
-		case 'B':
+		case 'b':
 		{
 			cin.ignore(); // para limpar o buffer
 
@@ -742,7 +749,7 @@ void opcoesPercursos(Company semprarrolar)
 			}
 			break;
 		}
-		case 'C':
+		case 'c':
 		{
 			cin.ignore();
 			string nomeParagem;
@@ -777,24 +784,25 @@ void opcoesPercursos(Company semprarrolar)
 	}
 }
 
-/*
 char menuOpcoesAutocarros()
 {
 	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
+	cout << "A. Visualizar informacao de autocarro\n";
 	cout << "# MENU ANTERIOR\n\n";
 
 	char choice;
 	cout << "--> opcao ";
 	cin >> choice;
-
-	while (choice != '#')
+	choice = tolower(choice);
+	while (choice != 'a' && choice != '#')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
 		cin >> choice;
+		choice = tolower(choice);
 	}
 
 	return choice;
@@ -807,12 +815,52 @@ void opcoesAutocarros(Company semprarrolar)
 	{
 		switch (choice)
 		{
+		case 'a':
+		{
+			unsigned int lineId, busId;
+			int posLine = -1;
+			do
+			{
+				cout << "Insira o ID da linha do autocarro: ";
+				cin >> lineId;
+
+				while (cin.fail())
+				{
+					cin.clear();
+					cin.ignore(1000, '\n');
+					cout << "Insira o ID da linha do autocarro: ";
+					cin >> lineId;
+				}
+
+				posLine = semprarrolar.procuraIdVetorLinhas(lineId);
+
+				if (posLine == -1)
+					cout << "O ID da linha introduzido nao existe!" << endl;
+
+			} while (posLine == -1);
+
+			unsigned int maxBusId = semprarrolar.numBusesNeededLine(posLine);
+
+			cout << "Insira o ID do autocarro: ";
+			cin >> busId;
+			while (cin.fail() || busId > maxBusId || busId < 1)
+			{
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "O ID de autocarro introduzido e invalido!\n";
+				cout << "Insira o ID do autocarro: ";
+				cin >> busId;
+			}
+
+			semprarrolar.printBusInfo(lineId, busId);
+		}
 		case '#':
 			return;
 		}
 	}
 }
 
+/*
 void opcoesEscalonamento(Company &semprarrolar)
 {
 	// ....

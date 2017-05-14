@@ -1,5 +1,4 @@
 #include <iostream>
-#include <list>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -8,6 +7,8 @@
 
 #include "Bus.h"
 #include "Company.h"
+
+ostream& operator<<(ostream& out, const Bus &bus);
 
 // construtor da classe
 Company::Company(string name, string fileDrivers, string fileLines)
@@ -692,47 +693,41 @@ unsigned int Company::numBusesNeededLine(unsigned int posLine)
 	return numberBusesLine;
 }
 
-vector<vector<Bus>> Company::createAllBuses(unsigned int horaInicioServico, unsigned int horaFimServico)
+vector<Bus> vetorBuses;
+void Company::createBuses()
 {
-	const int HORA_INICIO = horaInicioServico, HORA_FIM = horaFimServico;
-
-	/* criação de uma lista com todos os autocarros de todas as linhas,
-	sendo que cada autocarro possui um turno correspondente */
-	vector<vector<Bus>> listAllBuses;
-
+	/* criação de uma lista com todos os autocarros de todas as linhas*/
+	vector<Bus> vectorBuses;
 	for (size_t i = 0; i < vectorLines.size(); i++)
 	{
 		unsigned int lineId = vectorLines.at(i).getId();
-		vector<Bus> vectorBuses;
-		vector<Shift> vectorSchedule;
 
 		unsigned int numBuses = numBusesNeededLine(i);
 		for (size_t j = 0; j < numBuses; j++)
 		{
-			// assumindo turnos de 3 horas
-			unsigned int nShiftsPerBus = (unsigned int)ceil((double)HORA_FIM - HORA_INICIO / 3);
-
-			for (size_t k = 0; k < nShiftsPerBus; k++)
-			{
-				/* shift livre, possuindo apenas o id da linha
-				e bus correspondentes, ficandopor preencher o id
-				do condutor, e o horário do turno */
-				Shift newShift(lineId, 0, j, 0, 0);
-				vectorSchedule.push_back(newShift);
-			}
-
-			Bus newBus(0, 0, lineId, vectorSchedule);
+			Bus newBus(j+1, 0, lineId);
 			vectorBuses.push_back(newBus);
 		}
-
-		listAllBuses.push_back(vectorBuses);
 	}
-	return listAllBuses;
+	
+	vetorBuses = vectorBuses;
+}
+
+void Company::printBusInfo(unsigned int lineId, unsigned int busId)
+{
+	for (size_t i = 0; i < vetorBuses.size(); i++)
+	{
+		Bus bus = vetorBuses.at(i);
+		if (bus.getBusOrderInLine() == busId && bus.getLineId() == lineId)
+			cout << bus;
+	}
 }
 
 void Company::serviceDistribution(unsigned int horaInicio, unsigned int horaFim)
 {
 	
+
+
 }
 
 // --- efetuar gravação das alterações nos ficheiros ---
@@ -804,6 +799,23 @@ void Company::atualizaFicheiros(string fileDrivers, string fileLines)
 }
 
 // funções auxiliares
+ostream& operator<<(ostream& out, const Bus &bus)
+{
+	out << endl;
+	out << "BUS ID: " << bus.getBusOrderInLine() << endl;
+	out << "DRIVER ID: " << bus.getDriverId() << endl;
+	out << "LINE ID: " << bus.getLineId() << endl;
+	out << "SHIFTS: " << endl;
+	for (size_t i = 0; i < bus.getSchedule().size(); i++)
+	{
+		Shift shift = bus.getSchedule().at(i);
+		out << "->" << shift.getStartTime() << "-" << shift.getEndTime() << 
+		"	 DRIVER ID: " << shift.getDriverId() << endl;
+	}
+
+	return out;
+}
+
 void Company::driversBubblesort()
 {
 	// vao ser feitas n comparacoes
