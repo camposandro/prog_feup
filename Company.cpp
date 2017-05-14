@@ -694,18 +694,34 @@ unsigned int Company::numBusesNeededLine(unsigned int posLine)
 }
 
 vector<Bus> vetorBuses;
-void Company::createBuses()
+void Company::createBuses(unsigned int horaInicio, unsigned int horaFim)
 {
-	/* criação de uma lista com todos os autocarros de todas as linhas*/
+	unsigned int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+	/* criação de um vetor com todos os autocarros de todas as linhas*/
 	vector<Bus> vectorBuses;
 	for (size_t i = 0; i < vectorLines.size(); i++)
 	{
+		HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
 		unsigned int lineId = vectorLines.at(i).getId();
+		vector<Shift> vectorSchedule;
 
 		unsigned int numBuses = numBusesNeededLine(i);
-		for (size_t j = 0; j < numBuses; j++)
+		for (size_t j = 1; j <= numBuses; j++)
 		{
-			Bus newBus(j+1, 0, lineId);
+			HORA_INICIO = horaInicio, HORA_FIM = horaFim;
+
+			// assumindo turnos de 1 hora
+			unsigned int nShiftsPerBus = HORA_FIM - HORA_INICIO;
+			for (size_t k = 0; k < nShiftsPerBus; k++)
+			{
+				Shift newShift(lineId, 0, j, HORA_INICIO, HORA_INICIO++);
+				vectorSchedule.push_back(newShift);
+			}
+
+			Bus newBus(j, 0, lineId);
+			newBus.setSchedule(vectorSchedule);
 			vectorBuses.push_back(newBus);
 		}
 	}
@@ -798,19 +814,27 @@ void Company::atualizaFicheiros(string fileDrivers, string fileLines)
 	}
 }
 
-// funções auxiliares
+// --- funções auxiliares ---
+
+// obter o numero de shifts conforme o tempo de servico
+unsigned int intervaloServico;
+void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim)
+{
+	intervaloServico = horaFim - horaInicio;
+}
+
+// overloading do operador << para bus
 ostream& operator<<(ostream& out, const Bus &bus)
 {
 	out << endl;
 	out << "BUS ID: " << bus.getBusOrderInLine() << endl;
-	out << "DRIVER ID: " << bus.getDriverId() << endl;
 	out << "LINE ID: " << bus.getLineId() << endl;
 	out << "SHIFTS: " << endl;
-	for (size_t i = 0; i < bus.getSchedule().size(); i++)
+	for (size_t i = 0; i < intervaloServico; i++)
 	{
 		Shift shift = bus.getSchedule().at(i);
-		out << "->" << shift.getStartTime() << "-" << shift.getEndTime() << 
-		"	 DRIVER ID: " << shift.getDriverId() << endl;
+		string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
+		out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
 	}
 
 	return out;

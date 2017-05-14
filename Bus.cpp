@@ -49,6 +49,11 @@ void Bus::setLineId(unsigned int lineId)
 	this->lineId = lineId;
 }
 
+void Bus::setSchedule(vector<Shift> vectorShifts)
+{
+	this->schedule = vectorShifts;
+}
+
 ////////////////////////////
 // other methods
 ///////////////////////////

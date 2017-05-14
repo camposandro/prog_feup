@@ -27,7 +27,7 @@ void opcoesVisualizarLinha(Company semprarrolar);
 char menuOpcoesPercursos();
 void opcoesPercursos(Company semprarrolar);
 void opcoesAutocarros(Company semprarrolar);
-//void opcoesEscalonamento(Company &semprarrolar);
+void opcoesEscalonamento(Company &semprarrolar);
 
 // variáveis globais
 string nameCompany;
@@ -51,7 +51,7 @@ int main()
 	definirHorario();
 
 	// criacao dos autocarros para a companhia
-	semprarrolar.createBuses();
+	semprarrolar.createBuses(horaInicio, horaFim);
 
 	// chamar menu com companhia
 	opcoesPrincipal(semprarrolar);
@@ -94,6 +94,8 @@ void definirHorario()
 		cin >> horaDeFim;
 	}
 	horaFim = horaDeFim;
+
+	intervaloTempoServico(horaInicio, horaFim);
 }
 
 // abrir ficheiros de linhas e condutores
@@ -143,7 +145,7 @@ unsigned int menuPrincipal()
 		<< "4. Visualizar linhas\n"
 		<< "5. Visualizar condutores\n"
 		<< "6. Visualizar informacoes de autocarros\n"
-		//<< "7. Visualizar escalonamento de condutores\n"
+		<< "7. Escalonamento de condutores\n"
 		<< "0. Sair\n";
 	cout << endl;
 
@@ -151,7 +153,7 @@ unsigned int menuPrincipal()
 	cout << "--> opcao ";
 	cin >> choice;
 
-	while (choice > 6 || choice < 0)
+	while (choice > 7 || choice < 0)
 	{
 		cout << "Introduza uma opcao valida!\n";
 		cout << "--> opcao ";
@@ -190,7 +192,7 @@ void opcoesPrincipal(Company &semprarrolar)
 			opcoesAutocarros(semprarrolar);
 			break;
 		case 7:
-			//opcoesEscalonamento(semprarrolar);
+			opcoesEscalonamento(semprarrolar);
 			break;
 		default:
 			cout << "Introduza uma opcao valida!\n";
@@ -787,9 +789,9 @@ void opcoesPercursos(Company semprarrolar)
 char menuOpcoesAutocarros()
 {
 	cout << endl;
-	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n";
-	cout << "A. Visualizar informacao de autocarro\n";
-	cout << "# MENU ANTERIOR\n\n";
+	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n" <<
+			 "A. Visualizar informacao de autocarro\n" <<
+			 "# MENU ANTERIOR\n\n";
 
 	char choice;
 	cout << "--> opcao ";
@@ -860,9 +862,50 @@ void opcoesAutocarros(Company semprarrolar)
 	}
 }
 
-/*
+char menuEscalonamento()
+{
+	cout << endl;
+	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n" <<
+			 "A. Atribuir turno a condutor\n" <<
+			 "B. Visualizar trabalho de condutor\n" <<
+			 "C. Visualizar periodos de autocarro sem trabalho atribuido\n" <<
+			 "D. Visualizar condutores sem servico completo atribuido\n" <<
+			 "# MENU ANTERIOR\n\n";
+
+	char choice;
+	cout << "--> opcao ";
+	cin >> choice;
+	choice = tolower(choice);
+	while (choice != 'a' && choice != 'b' && choice != 'c' && choice != 'd' && choice != '#')
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Introduza uma opcao valida!\n";
+		cout << "--> opcao ";
+		cin >> choice;
+		choice = tolower(choice);
+	}
+
+	return choice;
+}
+
 void opcoesEscalonamento(Company &semprarrolar)
 {
-	// ....
+	char choice;
+	while (choice = menuEscalonamento())
+	{
+		switch (choice)
+		{
+		case 'a':
+		
+		case 'b':
+
+		case 'c':
+
+		case 'd':
+
+		case '#':
+			return;
+		}
+	}
 }
-*/

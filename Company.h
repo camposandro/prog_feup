@@ -10,6 +10,8 @@
 
 using namespace std;
 
+void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim);
+
 class Company
 {
  private:
@@ -46,7 +48,7 @@ class Company
   void linesBubblesort();
   void atualizaFicheiros(string fileDrivers, string fileLines);
   unsigned int numBusesNeededLine(unsigned int posLine);
-  void createBuses();
+  void createBuses(unsigned int horaInicio, unsigned int horaFim);
   void printBusInfo(unsigned int lineId, unsigned int busId);
   void serviceDistribution(unsigned int horaInicio, unsigned int horaFim); // funcao que implementa a afectacao de servico
   // funções auxiliares

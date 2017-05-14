@@ -27,5 +27,6 @@ class Bus
   void setOrderInLine(unsigned int orderInLine);
   void setDriverId(unsigned int driverId);
   void setLineId(unsigned int lineId);
+  void setSchedule(vector<Shift> vectorShifts);
   // other methods
 };
