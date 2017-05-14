@@ -689,27 +689,51 @@ unsigned int Company::numBusesNeededLine(unsigned int posLine)
 	// numero de autocarros necessarios para o percurso
 	unsigned int numberBusesLine = (int)((double)tempo_ida_e_volta / freqBusLinha + 1.0);
 
-	cout << numberBusesLine;
-
 	return numberBusesLine;
 }
 
-/*
-void Company::serviceDistribution()
+vector<vector<Bus>> Company::createAllBuses(unsigned int horaInicioServico, unsigned int horaFimServico)
 {
-	list<map<Bus, Shift>> listShifts;
+	const int HORA_INICIO = horaInicioServico, HORA_FIM = horaFimServico;
+
+	/* criação de uma lista com todos os autocarros de todas as linhas,
+	sendo que cada autocarro possui um turno correspondente */
+	vector<vector<Bus>> listAllBuses;
 
 	for (size_t i = 0; i < vectorLines.size(); i++)
 	{
+		unsigned int lineId = vectorLines.at(i).getId();
+		vector<Bus> vectorBuses;
+		vector<Shift> vectorSchedule;
+
 		unsigned int numBuses = numBusesNeededLine(i);
 		for (size_t j = 0; j < numBuses; j++)
 		{
-			
+			// assumindo turnos de 3 horas
+			unsigned int nShiftsPerBus = (unsigned int)ceil((double)HORA_FIM - HORA_INICIO / 3);
 
+			for (size_t k = 0; k < nShiftsPerBus; k++)
+			{
+				/* shift livre, possuindo apenas o id da linha
+				e bus correspondentes, ficandopor preencher o id
+				do condutor, e o horário do turno */
+				Shift newShift(lineId, 0, j, 0, 0);
+				vectorSchedule.push_back(newShift);
+			}
+
+			Bus newBus(0, 0, lineId, vectorSchedule);
+			vectorBuses.push_back(newBus);
 		}
+
+		listAllBuses.push_back(vectorBuses);
 	}
+	return listAllBuses;
 }
-*/
+
+void Company::serviceDistribution(unsigned int horaInicio, unsigned int horaFim)
+{
+	
+}
 
 // --- efetuar gravação das alterações nos ficheiros ---
 void Company::atualizaFicheiros(string fileDrivers, string fileLines)

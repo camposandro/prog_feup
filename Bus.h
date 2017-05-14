@@ -17,6 +17,7 @@ class Bus
   vector<Shift> schedule;
  public:
   Bus(unsigned int id, unsigned int driver, unsigned int line);
+  Bus(unsigned int id, unsigned int driver, unsigned int line, vector<Shift> vSchedule);
   // get methods
   unsigned int getBusOrderInLine() const;
   unsigned int getDriverId() const;

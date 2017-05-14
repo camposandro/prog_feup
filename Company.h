@@ -46,7 +46,8 @@ class Company
   void linesBubblesort();
   void atualizaFicheiros(string fileDrivers, string fileLines);
   unsigned int numBusesNeededLine(unsigned int posLine);
-  //void serviceDistribution(); // funcao que implementa a afectacao de servico
+  vector<vector<Bus>> createAllBuses(unsigned int horaInicioServico, unsigned int horaFimServico);
+  void serviceDistribution(unsigned int horaInicio, unsigned int horaFim); // funcao que implementa a afectacao de servico
   // funções auxiliares
   unsigned int procuraIdVetorCondutores(unsigned int idCondutor);
   unsigned int procuraIdVetorLinhas(unsigned int idLinha);

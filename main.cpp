@@ -546,7 +546,7 @@ void opcoesGestaoCondutores(Company &semprarrolar)
 char menuOpcoesVisualizarLinha()
 {
 	cout << endl;
-	cout << "A. Visualizar informacao de linha\n"
+	cout << "A. Visualizar informacao de linhas\n"
 		<< "B. Visualizar horario de linha\n"
 		<< "# MENU ANTERIOR\n\n";
 
