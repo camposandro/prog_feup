@@ -420,14 +420,14 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 	if (posInicial < posLinhai)
 	{
 		unsigned int tempoFinal = 0;
-		for (size_t k = posLinhai; k > posInicial; k--)
+		for (size_t k = posInicial; k < posLinhai; k++)
 		{
 			// imprime os trajetos entre as paragens entre "-->"
 			cout << left << setw(linhai.getBusStops().at(k).length() + 1) << linhai.getBusStops().at(k) << "-->"
-				<< right << setw(linhai.getBusStops().at(k - 1).length() + 1) << linhai.getBusStops().at(k - 1);
+				<< right << setw(linhai.getBusStops().at(k + 1).length() + 1) << linhai.getBusStops().at(k + 1);
 			// imprime os tempos de cada trajeto 
-			cout << " " << linhai.getTimings().at(k - 1) << "min" << endl;
-			tempoFinal += linhai.getTimings().at(k - 1);
+			cout << " " << linhai.getTimings().at(k) << "min" << endl;
+			tempoFinal += linhai.getTimings().at(k);
 		}
 
 		if (posFinal < posLinhaj)
@@ -472,8 +472,8 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 			cout << left << setw(linhai.getBusStops().at(k).length() + 1) << linhai.getBusStops().at(k) << "-->"
 				<< right << setw(linhai.getBusStops().at(k - 1).length() + 1) << linhai.getBusStops().at(k - 1);
 			// imprime os tempos de cada trajeto 
-			cout << " " << linhai.getTimings().at(k) << "min" << endl;
-			tempoFinal += linhai.getTimings().at(k);
+			cout << " " << linhai.getTimings().at(k - 1) << "min" << endl;
+			tempoFinal += linhai.getTimings().at(k - 1);
 		}
 
 		if (posFinal < posLinhaj)
