@@ -8,9 +8,13 @@
 #include "Bus.h"
 #include "Company.h"
 
+// overloading de operador <<
 ostream& operator<<(ostream& out, const Bus &bus);
 ostream& operator<<(ostream& out, const Shift &shift);
-void mostraTurnosAtribuidos();
+
+// vetores para guardar os bus e os turnos atribuidos
+vector<Bus> vetorBuses;
+vector<Shift> vetorTurnosAtribuidos;
 
 // construtor da classe
 Company::Company(string name, string fileDrivers, string fileLines)
@@ -397,7 +401,7 @@ void Company::percursoEntreParagensSemLinhaComum(vector<int> linhasParagem1, vec
 						unsigned int posLinhai = k;
 						unsigned int posLinhaj = p;
 						nomeParagemComum.push_back(busStopsi.at(k));
-						imprimePercursoParagens2(linhai, linhaj , posParagemInicial, posParagemFinal, posLinhai, posLinhaj);
+						imprimePercursoParagensSemLinhaComum(linhai, linhaj , posParagemInicial, posParagemFinal, posLinhai, posLinhaj);
 					}
 				}
 			}
@@ -411,7 +415,8 @@ void Company::percursoEntreParagensSemLinhaComum(vector<int> linhasParagem1, vec
 	}
 }
 
-void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj)
+// imprime o percurso caso exista um percurso possivel entre duas linhas com paragem em comum
+void Company::imprimePercursoParagensSemLinhaComum(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj)
 {
 	cout << endl << "PERCURSO " << "NA LINHA " << linhai.getId() << ":" << endl;
 
@@ -431,6 +436,8 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 			tempoFinal += linhai.getTimings().at(k);
 		}
 
+		cout << endl << "PERCURSO " << "NA LINHA " << linhaj.getId() << ":" << endl;
+
 		if (posFinal < posLinhaj)
 		{
 			for (size_t k = posLinhaj; k > posFinal; k--)
@@ -459,9 +466,9 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 		if (tempoFinal > 60)
 		{
 			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
-			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+			cout << endl << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
 		}
-		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
+		else cout << endl << "Tempo total da viagem: " << tempoFinal << "min" << endl;
 	}
 	// caso se introduza no sentido inverso
 	else if (posInicial > posLinhai)
@@ -477,6 +484,8 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 			tempoFinal += linhai.getTimings().at(k - 1);
 		}
 
+		cout << endl << "PERCURSO " << "NA LINHA " << linhaj.getId() << ":" << endl;
+
 		if (posFinal < posLinhaj)
 		{
 			for (size_t k = posLinhaj; k > posFinal; k--)
@@ -505,9 +514,9 @@ void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial,
 		if (tempoFinal > 60)
 		{
 			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
-			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+			cout << endl << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
 		}
-		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
+		else cout << endl << "Tempo total da viagem: " << tempoFinal << "min" << endl;
 	}
 }
 
@@ -821,6 +830,8 @@ vector<Driver> Company::obterCondutoresFicheiro(string fileDrivers)
 ////////////////////////////
 // outros metodos
 ///////////////////////////
+
+// --- BUS e respetivos TURNOS ---
 unsigned int Company::numBusesNeededLine(unsigned int posLine)
 {
 	// tempo de ida e volta numa viagem da linha
@@ -838,7 +849,6 @@ unsigned int Company::numBusesNeededLine(unsigned int posLine)
 	return numberBusesLine;
 }
 
-vector<Bus> vetorBuses;
 void Company::createBuses(unsigned int horaInicio, unsigned int horaFim)
 {
 	unsigned int HORA_INICIO = horaInicio, HORA_FIM = horaFim;
@@ -884,7 +894,6 @@ void Company::printBusInfo(unsigned int lineId, unsigned int busId)
 	}
 }
 
-vector<Shift> vetorTurnosAtribuidos;
 void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int startTime, unsigned int endTime)
 {
 	for (size_t i = 0; i < vetorBuses.size(); i++)
@@ -926,13 +935,136 @@ void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, un
 	}
 }
 
-// mostra turnos atribuidos
 void mostraTurnosAtribuidos()
 {
 	for (size_t i = 0; i < vetorTurnosAtribuidos.size(); i++)
 	{
 		cout << vetorTurnosAtribuidos.at(i) << endl;
 	}
+}
+
+// --- FUNCOES AUXILIARES ---
+// obter o numero de shifts conforme o tempo de servico
+unsigned int intervaloServico;
+void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim)
+{
+	intervaloServico = horaFim - horaInicio;
+}
+
+// overloading do operador << para bus
+ostream& operator<<(ostream& out, const Bus &bus)
+{
+	out << endl;
+	out << "BUS ID: " << bus.getBusOrderInLine() << endl;
+	out << "LINE ID: " << bus.getLineId() << endl;
+	out << "SHIFTS: " << endl;
+	for (size_t i = 0; i < intervaloServico; i++)
+	{
+		Shift shift = bus.getSchedule().at(i);
+		string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
+		out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
+	}
+
+	return out;
+}
+
+// overloading do operador << para shift
+ostream& operator<<(ostream& out, const Shift &shift)
+{
+	string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
+	out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
+
+	return out;
+}
+
+// funcoes bubblesort para ordenacao dos vetores de drivers e linhas
+void Company::driversBubblesort()
+{
+	// vao ser feitas n comparacoes
+	for (int i = 0; i < vectorDrivers.size(); i++)
+	{
+		// comparar elem com o elem seg.
+		for (size_t j = 0; j < vectorDrivers.size() - 1; j++)
+		{
+			// fazer swap se n+1 < n
+			if (vectorDrivers[j + 1].getId() < vectorDrivers[j].getId())
+			{
+				Driver t = vectorDrivers[j + 1];
+				vectorDrivers[j + 1] = vectorDrivers[j];
+				vectorDrivers[j] = t;
+			}
+		}
+	}
+}
+
+void Company::linesBubblesort()
+{
+	// vao ser feitas n comparacoes
+	for (int i = 0; i < vectorLines.size(); i++)
+	{
+		// comparar elem com o elem seg.
+		for (size_t j = 0; j < vectorLines.size() - 1; j++)
+		{
+			// fazer swap se n+1 < n
+			if (vectorLines[j + 1].getId() < vectorLines[j].getId())
+			{
+				Line t = vectorLines[j + 1];
+				vectorLines[j + 1] = vectorLines[j];
+				vectorLines[j] = t;
+			}
+		}
+	}
+}
+
+// funcoes para obter posicoes dos vetores dos condutores ou linhas
+unsigned int Company::procuraIdVetorCondutores(unsigned int idCondutor)
+{
+	for (size_t i = 0; i < vectorDrivers.size(); i++)
+	{
+		if (vectorDrivers.at(i).getId() == idCondutor) return i;
+	}
+	return -1;
+}
+
+unsigned int Company::procuraIdVetorLinhas(unsigned int idLinha)
+{
+	for (size_t i = 0; i < vectorLines.size(); i++)
+	{
+		if (vectorLines.at(i).getId() == idLinha) return i;
+	}
+	return -1;
+}
+
+vector<int> Company::procuraNomeVetorLinhas(string nomeParagem)
+{
+	// coloca o nomeParagem a minuscula
+	string nomeParagemMinuscula = nomeParagem;
+	for (size_t k = 0; k <= nomeParagem.length(); k++)
+		nomeParagemMinuscula[k] = tolower(nomeParagem[k]);
+
+	// vetor que contem as posicoes das linhas que contiverem a paragem
+	vector<int> posLinhasParagem;
+
+	for (size_t i = 0; i < vectorLines.size(); i++)
+	{
+		vector<string> vetorParagens = vectorLines.at(i).getBusStops();
+		for (size_t j = 0; j < vetorParagens.size(); j++)
+		{
+			// colocar cada elemento procurado no vetor em minuscula
+			string paragemVetor = vetorParagens.at(j);
+			for (int p = 0; p < paragemVetor.length(); p++)
+				paragemVetor[p] = tolower(paragemVetor[p]);
+
+			if (paragemVetor == nomeParagemMinuscula)
+			{
+				// coloca o id no vetor
+				posLinhasParagem.push_back(i);
+				break;
+			}
+		}
+	}
+
+	return posLinhasParagem;
 }
 
 // --- efetuar gravação das alterações nos ficheiros ---
@@ -1001,126 +1133,4 @@ void Company::atualizaFicheiros(string fileDrivers, string fileLines)
 			}
 		}
 	}
-}
-
-// --- funções auxiliares ---
-
-// obter o numero de shifts conforme o tempo de servico
-unsigned int intervaloServico;
-void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim)
-{
-	intervaloServico = horaFim - horaInicio;
-}
-
-// overloading do operador << para bus
-ostream& operator<<(ostream& out, const Bus &bus)
-{
-	out << endl;
-	out << "BUS ID: " << bus.getBusOrderInLine() << endl;
-	out << "LINE ID: " << bus.getLineId() << endl;
-	out << "SHIFTS: " << endl;
-	for (size_t i = 0; i < intervaloServico; i++)
-	{
-		Shift shift = bus.getSchedule().at(i);
-		string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
-		out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
-	}
-
-	return out;
-}
-
-ostream& operator<<(ostream& out, const Shift &shift)
-{
-	string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
-	out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
-
-	return out;
-}
-
-void Company::driversBubblesort()
-{
-	// vao ser feitas n comparacoes
-	for (int i = 0; i < vectorDrivers.size(); i++)
-	{
-		// comparar elem com o elem seg.
-		for (size_t j = 0; j < vectorDrivers.size() - 1; j++)
-		{
-			// fazer swap se n+1 < n
-			if (vectorDrivers[j + 1].getId() < vectorDrivers[j].getId())
-			{
-				Driver t = vectorDrivers[j + 1];
-				vectorDrivers[j + 1] = vectorDrivers[j];
-				vectorDrivers[j] = t;
-			}
-		}
-	}
-}
-
-void Company::linesBubblesort()
-{
-	// vao ser feitas n comparacoes
-	for (int i = 0; i < vectorLines.size(); i++)
-	{
-		// comparar elem com o elem seg.
-		for (size_t j = 0; j < vectorLines.size() - 1; j++)
-		{
-			// fazer swap se n+1 < n
-			if (vectorLines[j + 1].getId() < vectorLines[j].getId())
-			{
-				Line t = vectorLines[j + 1];
-				vectorLines[j + 1] = vectorLines[j];
-				vectorLines[j] = t;
-			}
-		}
-	}
-}
-
-unsigned int Company::procuraIdVetorCondutores(unsigned int idCondutor)
-{
-	for (size_t i = 0; i < vectorDrivers.size(); i++)
-	{
-		if (vectorDrivers.at(i).getId() == idCondutor) return i;
-	}
-	return -1;
-}
-
-unsigned int Company::procuraIdVetorLinhas(unsigned int idLinha)
-{
-	for (size_t i = 0; i < vectorLines.size(); i++)
-	{
-		if (vectorLines.at(i).getId() == idLinha) return i;
-	}
-	return -1;
-}
-
-vector<int> Company::procuraNomeVetorLinhas(string nomeParagem)
-{
-	// coloca o nomeParagem a minuscula
-	string nomeParagemMinuscula = nomeParagem;
-	for (size_t k = 0; k <= nomeParagem.length(); k++)
-		nomeParagemMinuscula[k] = tolower(nomeParagem[k]);
-
-	// vetor que contem as posicoes das linhas que contiverem a paragem
-	vector<int> posLinhasParagem;
-
-	for (size_t i = 0; i < vectorLines.size(); i++)
-	{
-		vector<string> vetorParagens = vectorLines.at(i).getBusStops();
-		for (size_t j = 0; j < vetorParagens.size(); j++)
-		{
-			// colocar cada elemento procurado no vetor em minuscula
-			string paragemVetor = vetorParagens.at(j);
-			for (int p = 0; p < paragemVetor.length(); p++)
-				paragemVetor[p] = tolower(paragemVetor[p]);
-
-			if (paragemVetor == nomeParagemMinuscula)
-			{
-				// coloca o id no vetor
-				posLinhasParagem.push_back(i);
-				break;
-			}
-		}
-	}
-
-	return posLinhasParagem;
 }

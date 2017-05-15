@@ -10,7 +10,9 @@
 
 using namespace std;
 
+// prototipos de funcoes adicionais
 void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim);
+void mostraTurnosAtribuidos();
 
 class Company
 {
@@ -31,7 +33,7 @@ class Company
   void pesquisaParagem(string nomeParagem, vector<int> idLinhasComParagem);
   void percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1, unsigned int posParagem2);
   void percursoEntreParagensSemLinhaComum(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal);
-  void imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj);
+  void imprimePercursoParagensSemLinhaComum(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj);
   // métodos dos horários de linha e paragem
   void horarioLinha(unsigned int lineId, unsigned int posLine, unsigned int horaInicio, unsigned int horaFim);
   void horarioParagem(string nomeParagem, vector<int> linhasComAParagem, unsigned int horaInicio, unsigned int horaFim);

@@ -868,7 +868,7 @@ char menuEscalonamento()
 	cout << endl;
 	cout << "SELECIONE UMA DAS OPCOES SEGUINTES:\n" <<
 			 "A. Atribuir turno a condutor\n" <<
-			 "B. Visualizar trabalho de condutor\n" <<
+			 "B. Visualizar trabalhos atribuidos\n" <<
 			 "C. Visualizar periodos de autocarro sem trabalho atribuido\n" <<
 			 "D. Visualizar condutores sem servico completo atribuido\n" <<
 			 "# MENU ANTERIOR\n\n";
@@ -980,7 +980,7 @@ void opcoesEscalonamento(Company &semprarrolar)
 			break;
 		}
 		case 'b':
-
+			mostraTurnosAtribuidos();
 		case 'c':
 
 		case 'd':
