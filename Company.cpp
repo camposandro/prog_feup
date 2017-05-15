@@ -894,20 +894,16 @@ void Company::printBusInfo(unsigned int lineId, unsigned int busId)
 	}
 }
 
-void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int startTime, unsigned int endTime)
+void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int endTime, unsigned int startTime)
 {
 	for (size_t i = 0; i < vetorBuses.size(); i++)
 	{
-		Bus bus = vetorBuses.at(i);
-
-		if (bus.getLineId() == lineId && bus.getBusOrderInLine() == busId)
+		if (vetorBuses.at(i).getLineId() == lineId && vetorBuses.at(i).getBusOrderInLine() == busId)
 		{
-			unsigned int posBus = i;
-			for (size_t j = 0; j < bus.getSchedule().size(); j++)
+			for (size_t j = 0; j < vetorBuses.at(i).getSchedule().size(); j++)
 			{
-				if (bus.getSchedule().at(j).getStartTime() == startTime && bus.getSchedule().at(j).getEndTime() == endTime)
+				if (vetorBuses.at(i).getSchedule().at(j).getStartTime() == startTime && vetorBuses.at(i).getSchedule().at(j).getEndTime() == endTime)
 				{
-					unsigned int posShift = j;
 					unsigned int somaHorasCondutor = 0;
 					for (size_t k = 0; k < vetorTurnosAtribuidos.size(); k++)
 					{
@@ -919,15 +915,17 @@ void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, un
 
 					unsigned int posVetorCondutores = procuraIdVetorCondutores(driverId);
 
-					if (somaHorasCondutor >= vectorDrivers.at(posVetorCondutores).getMaxWeekWorkingTime())
+					if (somaHorasCondutor >= vectorDrivers.at(posVetorCondutores).getShiftMaxDuration())
 					{
 						cout << "O condutor introduzido ja nao pode realizar mais horas de trabalho\n";
 					}
 					else
 					{
-						vetorBuses.at(posBus).getSchedule().at(posShift).setDriverId(driverId);
-						vetorTurnosAtribuidos.push_back(bus.getSchedule().at(j));
-						vetorBuses.at(posBus).getSchedule().erase(vetorBuses.at(posBus).getSchedule().begin() + posShift);
+						vetorTurnosAtribuidos.push_back(vetorBuses.at(i).getSchedule().at(j));
+						vetorTurnosAtribuidos.at(vetorTurnosAtribuidos.size() - 1).setBusLineId(lineId);
+						vetorTurnosAtribuidos.at(vetorTurnosAtribuidos.size() - 1).setDriverId(driverId);
+						vetorBuses.at(i).removeShiftVetor(j);
+						return;
 					}
 				}
 			}
@@ -939,7 +937,18 @@ void mostraTurnosAtribuidos()
 {
 	for (size_t i = 0; i < vetorTurnosAtribuidos.size(); i++)
 	{
-		cout << vetorTurnosAtribuidos.at(i) << endl;
+		if (i != vetorTurnosAtribuidos.size() - 1)
+			cout << vetorTurnosAtribuidos.at(i) << endl;
+		else
+			cout << vetorTurnosAtribuidos.at(i);
+	}
+}
+
+void mostraTurnosNaoAtribuidos()
+{
+	for (size_t i = 0; i < vetorBuses.size(); i++)
+	{
+		cout << vetorBuses.at(i) << endl;
 	}
 }
 
@@ -971,6 +980,7 @@ ostream& operator<<(ostream& out, const Bus &bus)
 // overloading do operador << para shift
 ostream& operator<<(ostream& out, const Shift &shift)
 {
+	cout << "Shifts da linha " << shift.getBusLineId() << ":" << endl;
 	string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
 	out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
 

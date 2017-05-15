@@ -957,32 +957,28 @@ void opcoesEscalonamento(Company &semprarrolar)
 			}
 
 			unsigned int startTime, endTime;
-			cout << "Insira a hora de inicio do turno: ";
+			cout << "Insira a hora de inicio do turno (1h): ";
 			cin >> startTime;
-			while (cin.fail() || startTime < 0 || startTime > 23)
+			while (cin.fail() || startTime < 0 || startTime > 23 || startTime < horaInicio || startTime > horaFim - 1)
 			{
 				cin.clear();
-				cin.ignore(1000, '\n');
-				cout << "Insira a hora de inicio do turno: ";
+				cin.ignore();
+				cout << "Hora invalida!\n";
+				cout << "Insira a hora de inicio do turno (1h): ";
 				cin >> startTime;
 			}
-			cout << "Insira a hora de fim do turno: ";
-			cin >> endTime;
-			while (cin.fail() || endTime < 0 || endTime > 23)
-			{
-				cin.clear();
-				cin.ignore(1000, '\n');
-				cout << "Insira a hora de fim do turno: ";
-				cin >> endTime;
-			}
-
+			
+			endTime = startTime + 1;
+			
 			semprarrolar.serviceDistribution(driverId,lineId,busId,startTime,endTime);
 			break;
 		}
 		case 'b':
 			mostraTurnosAtribuidos();
+			break;
 		case 'c':
-
+			mostraTurnosNaoAtribuidos();
+			break;
 		case 'd':
 
 		case '#':

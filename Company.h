@@ -13,6 +13,7 @@ using namespace std;
 // prototipos de funcoes adicionais
 void intervaloTempoServico(unsigned int horaInicio, unsigned int horaFim);
 void mostraTurnosAtribuidos();
+void mostraTurnosNaoAtribuidos();
 
 class Company
 {

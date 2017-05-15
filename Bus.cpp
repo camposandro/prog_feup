@@ -31,6 +31,11 @@ vector<Shift> Bus::getSchedule() const
   return schedule;
 }
 
+vector<Shift> Bus::getScheduleAlteravel()
+{
+	return schedule;
+}
+
 //////////////////////////////
 // metodos set
 /////////////////////////////
@@ -57,4 +62,7 @@ void Bus::setSchedule(vector<Shift> vectorShifts)
 ////////////////////////////
 // other methods
 ///////////////////////////
-
+void Bus::removeShiftVetor(unsigned int posShift)
+{
+	schedule.erase(schedule.begin() + posShift);
+}

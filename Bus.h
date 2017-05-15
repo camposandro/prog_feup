@@ -23,10 +23,12 @@ class Bus
   unsigned int getDriverId() const;
   unsigned int getLineId() const;
   vector<Shift> getSchedule() const;
+  vector<Shift> getScheduleAlteravel();
   // set methods
   void setOrderInLine(unsigned int orderInLine);
   void setDriverId(unsigned int driverId);
   void setLineId(unsigned int lineId);
   void setSchedule(vector<Shift> vectorShifts);
   // other methods
+  void removeShiftVetor(unsigned int posShift);
 };
