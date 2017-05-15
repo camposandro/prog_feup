@@ -918,6 +918,7 @@ void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, un
 					if (somaHorasCondutor >= vectorDrivers.at(posVetorCondutores).getShiftMaxDuration())
 					{
 						cout << "O condutor introduzido ja nao pode realizar mais horas de trabalho\n";
+						return;
 					}
 					else
 					{
@@ -925,6 +926,7 @@ void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, un
 						vetorTurnosAtribuidos.at(vetorTurnosAtribuidos.size() - 1).setBusLineId(lineId);
 						vetorTurnosAtribuidos.at(vetorTurnosAtribuidos.size() - 1).setDriverId(driverId);
 						vetorBuses.at(i).removeShiftVetor(j);
+
 						return;
 					}
 				}
