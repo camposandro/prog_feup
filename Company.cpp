@@ -368,8 +368,9 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 	}
 }
 
+// percurso entre paragens sem linha em comum
 vector<string> nomeParagemComum;
-void Company::percursoEntreParagens2(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal)
+void Company::percursoEntreParagensSemLinhaComum(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal)
 {
 	for (size_t i = 0; i < linhasParagem1.size(); i++)
 	{
@@ -405,14 +406,14 @@ void Company::percursoEntreParagens2(vector<int> linhasParagem1, vector<int> lin
 
 	if (nomeParagemComum.size() == 0)
 	{
-		cout << "Nao existem linhas com paragem em comum com as dadas para fazer o transbordo ...\n";
+		cout << "Nao existem linhas com paragem em comum com as dadas para fazer o transbordo ...\n\n";
 		return;
 	}
 }
 
 void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj)
 {
-	cout << "PERCURSO " << "NA LINHA " << linhai.getId() << ":" << endl;
+	cout << endl << "PERCURSO " << "NA LINHA " << linhai.getId() << ":" << endl;
 
 	if (posInicial == -1 || posFinal == -1) return;
 

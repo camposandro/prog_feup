@@ -30,7 +30,7 @@ class Company
   // métodos de tratamento de paragens e percursos
   void pesquisaParagem(string nomeParagem, vector<int> idLinhasComParagem);
   void percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1, unsigned int posParagem2);
-  void percursoEntreParagens2(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal);
+  void percursoEntreParagensSemLinhaComum(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal);
   void imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj);
   // métodos dos horários de linha e paragem
   void horarioLinha(unsigned int lineId, unsigned int posLine, unsigned int horaInicio, unsigned int horaFim);
