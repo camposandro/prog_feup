@@ -709,6 +709,8 @@ void opcoesPercursos(Company semprarrolar)
 			if (linhasComum.size() == 0) // nao existem linhas constituidas por ambas as paragens
 			{
 				cout << "Nao existem linhas constituidas por ambas as paragens!" << endl;
+			
+				semprarrolar.percursoEntreParagens2(linhasParagem1, linhasParagem2, nomeParagem1, nomeParagem2);
 			}
 			else
 			{

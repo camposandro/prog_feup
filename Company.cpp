@@ -9,6 +9,8 @@
 #include "Company.h"
 
 ostream& operator<<(ostream& out, const Bus &bus);
+ostream& operator<<(ostream& out, const Shift &shift);
+void mostraTurnosAtribuidos();
 
 // construtor da classe
 Company::Company(string name, string fileDrivers, string fileLines)
@@ -357,6 +359,148 @@ void Company::percursoEntreParagens(Line linhaEmComum, unsigned int posParagem1,
 			cout << " " << linhaEmComum.getTimings().at(k) << "min" << endl;
 			tempoFinal += linhaEmComum.getTimings().at(k);
 		}
+		if (tempoFinal > 60)
+		{
+			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
+			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+		}
+		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
+	}
+}
+
+vector<string> nomeParagemComum;
+void Company::percursoEntreParagens2(vector<int> linhasParagem1, vector<int> linhasParagem2, string paragemInicial, string paragemFinal)
+{
+	for (size_t i = 0; i < linhasParagem1.size(); i++)
+	{
+		for (size_t j = 0; j < linhasParagem2.size(); j++)
+		{
+			Line linhai = vectorLines.at(linhasParagem1.at(i));
+			Line linhaj = vectorLines.at(linhasParagem2.at(j));
+			vector<string> busStopsi = linhai.getBusStops();
+			vector<string> busStopsj = linhaj.getBusStops();
+
+			int posParagemFinal = -1, posParagemInicial = -1;
+			for (size_t k = 0; k < busStopsi.size(); k++)
+			{
+				if (busStopsi.at(k) == paragemInicial)
+					posParagemInicial = k;
+
+				for (size_t p = 0; p < busStopsj.size(); p++)
+				{
+					if (busStopsj.at(p) == paragemFinal)
+						posParagemFinal = p;
+
+					if (busStopsi.at(k) == busStopsj.at(p))
+					{
+						unsigned int posLinhai = k;
+						unsigned int posLinhaj = p;
+						nomeParagemComum.push_back(busStopsi.at(k));
+						imprimePercursoParagens2(linhai, linhaj , posParagemInicial, posParagemFinal, posLinhai, posLinhaj);
+					}
+				}
+			}
+		}
+	}
+
+	if (nomeParagemComum.size() == 0)
+	{
+		cout << "Nao existem linhas com paragem em comum com as dadas para fazer o transbordo ...\n";
+		return;
+	}
+}
+
+void Company::imprimePercursoParagens2(Line linhai, Line linhaj, int posInicial, int posFinal, unsigned int posLinhai, unsigned int posLinhaj)
+{
+	cout << "PERCURSO " << "NA LINHA " << linhai.getId() << ":" << endl;
+
+	if (posInicial == -1 || posFinal == -1) return;
+
+	// caso se introduza no sentido original
+	if (posInicial < posLinhai)
+	{
+		unsigned int tempoFinal = 0;
+		for (size_t k = posLinhai; k > posInicial; k--)
+		{
+			// imprime os trajetos entre as paragens entre "-->"
+			cout << left << setw(linhai.getBusStops().at(k).length() + 1) << linhai.getBusStops().at(k) << "-->"
+				<< right << setw(linhai.getBusStops().at(k - 1).length() + 1) << linhai.getBusStops().at(k - 1);
+			// imprime os tempos de cada trajeto 
+			cout << " " << linhai.getTimings().at(k - 1) << "min" << endl;
+			tempoFinal += linhai.getTimings().at(k - 1);
+		}
+
+		if (posFinal < posLinhaj)
+		{
+			for (size_t k = posLinhaj; k > posFinal; k--)
+			{
+				// imprime os trajetos entre as paragens entre "-->"
+				cout << left << setw(linhaj.getBusStops().at(k).length() + 1) << linhaj.getBusStops().at(k) << "-->"
+					<< right << setw(linhaj.getBusStops().at(k - 1).length() + 1) << linhaj.getBusStops().at(k - 1);
+				// imprime os tempos de cada trajeto 
+				cout << " " << linhaj.getTimings().at(k - 1) << "min" << endl;
+				tempoFinal += linhaj.getTimings().at(k - 1);
+			}
+		}
+		else if (posFinal > posLinhaj)
+		{
+			for (size_t k = posLinhaj; k < posFinal; k++)
+			{
+				// imprime os trajetos entre as paragens entre "-->"
+				cout << left << setw(linhaj.getBusStops().at(k).length() + 1) << linhaj.getBusStops().at(k) << "-->"
+					<< right << setw(linhaj.getBusStops().at(k + 1).length() + 1) << linhaj.getBusStops().at(k + 1);
+				// imprime os tempos de cada trajeto 
+				cout << " " << linhaj.getTimings().at(k) << "min" << endl;
+				tempoFinal += linhaj.getTimings().at(k);
+			}
+		}
+
+		if (tempoFinal > 60)
+		{
+			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
+			cout << "Tempo total da viagem: " << nHoras << " hora(s) e " << nMin << " min" << endl;
+		}
+		else cout << "Tempo total da viagem: " << tempoFinal << "min" << endl;
+	}
+	// caso se introduza no sentido inverso
+	else if (posInicial > posLinhai)
+	{
+		unsigned int tempoFinal = 0;
+		for (size_t k = posLinhai; k < posInicial; k--)
+		{
+			// imprime os trajetos entre as paragens entre "-->"
+			cout << left << setw(linhai.getBusStops().at(k).length() + 1) << linhai.getBusStops().at(k) << "-->"
+				<< right << setw(linhai.getBusStops().at(k - 1).length() + 1) << linhai.getBusStops().at(k - 1);
+			// imprime os tempos de cada trajeto 
+			cout << " " << linhai.getTimings().at(k) << "min" << endl;
+			tempoFinal += linhai.getTimings().at(k);
+		}
+
+		if (posFinal < posLinhaj)
+		{
+			for (size_t k = posLinhaj; k > posFinal; k--)
+			{
+				// imprime os trajetos entre as paragens entre "-->"
+				cout << left << setw(linhaj.getBusStops().at(k).length() + 1) << linhaj.getBusStops().at(k) << "-->"
+					<< right << setw(linhaj.getBusStops().at(k - 1).length() + 1) << linhaj.getBusStops().at(k - 1);
+				// imprime os tempos de cada trajeto 
+				cout << " " << linhaj.getTimings().at(k - 1) << "min" << endl;
+				tempoFinal += linhaj.getTimings().at(k - 1);
+			}
+		}
+		else if (posFinal > posLinhaj)
+		{
+			for (size_t k = posLinhaj; k < posFinal; k++)
+			{
+				// imprime os trajetos entre as paragens entre "-->"
+				cout << left << setw(linhaj.getBusStops().at(k).length() + 1) << linhaj.getBusStops().at(k) << "-->"
+					<< right << setw(linhaj.getBusStops().at(k + 1).length() + 1) << linhaj.getBusStops().at(k + 1);
+				// imprime os tempos de cada trajeto 
+				cout << " " << linhaj.getTimings().at(k) << "min" << endl;
+				tempoFinal += linhaj.getTimings().at(k);
+			}
+		}
+
 		if (tempoFinal > 60)
 		{
 			unsigned int nHoras = tempoFinal / 60, nMin = tempoFinal % 60;
@@ -725,7 +869,7 @@ void Company::createBuses(unsigned int horaInicio, unsigned int horaFim)
 			vectorBuses.push_back(newBus);
 		}
 	}
-	
+
 	vetorBuses = vectorBuses;
 }
 
@@ -739,15 +883,54 @@ void Company::printBusInfo(unsigned int lineId, unsigned int busId)
 	}
 }
 
+vector<Shift> vetorTurnosAtribuidos;
 void Company::serviceDistribution(unsigned int driverId, unsigned int lineId, unsigned int busId, unsigned int startTime, unsigned int endTime)
 {
 	for (size_t i = 0; i < vetorBuses.size(); i++)
 	{
 		Bus bus = vetorBuses.at(i);
+
 		if (bus.getLineId() == lineId && bus.getBusOrderInLine() == busId)
 		{
-			
+			unsigned int posBus = i;
+			for (size_t j = 0; j < bus.getSchedule().size(); j++)
+			{
+				if (bus.getSchedule().at(j).getStartTime() == startTime && bus.getSchedule().at(j).getEndTime() == endTime)
+				{
+					unsigned int posShift = j;
+					unsigned int somaHorasCondutor = 0;
+					for (size_t k = 0; k < vetorTurnosAtribuidos.size(); k++)
+					{
+						if (vetorTurnosAtribuidos.at(k).getDriverId() == driverId)
+						{
+							somaHorasCondutor++;
+						}
+					}
+
+					unsigned int posVetorCondutores = procuraIdVetorCondutores(driverId);
+
+					if (somaHorasCondutor >= vectorDrivers.at(posVetorCondutores).getMaxWeekWorkingTime())
+					{
+						cout << "O condutor introduzido ja nao pode realizar mais horas de trabalho\n";
+					}
+					else
+					{
+						vetorBuses.at(posBus).getSchedule().at(posShift).setDriverId(driverId);
+						vetorTurnosAtribuidos.push_back(bus.getSchedule().at(j));
+						vetorBuses.at(posBus).getSchedule().erase(vetorBuses.at(posBus).getSchedule().begin() + posShift);
+					}
+				}
+			}
 		}
+	}
+}
+
+// mostra turnos atribuidos
+void mostraTurnosAtribuidos()
+{
+	for (size_t i = 0; i < vetorTurnosAtribuidos.size(); i++)
+	{
+		cout << vetorTurnosAtribuidos.at(i) << endl;
 	}
 }
 
@@ -841,6 +1024,14 @@ ostream& operator<<(ostream& out, const Bus &bus)
 		string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
 		out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
 	}
+
+	return out;
+}
+
+ostream& operator<<(ostream& out, const Shift &shift)
+{
+	string horas = to_string(shift.getEndTime()) + 'h' + '-' + to_string(shift.getStartTime()) + 'h';
+	out << "->" << left << setw(10) << horas << "DRIVER ID: " << shift.getDriverId() << endl;
 
 	return out;
 }
